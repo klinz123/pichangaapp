@@ -163,7 +163,6 @@ Genera `PichangaApp/target/pichangaapp.jar`, ejecutable con `java -jar`.
 │   ├── src/test/java/               # 25 pruebas
 │   ├── database/init-db.sql         # creación de base, login y permisos
 │   └── pom.xml
-├── Avance de Proyecto Final 1/      # informe APA 7, diagramas y prototipos
 ├── docker-compose.yml               # SQL Server 2022 para desarrollo
 ├── DESIGN.md                        # sistema de diseño (tokens, tipografía, color)
 └── PRODUCT.md                       # contexto de producto y alcance
@@ -172,19 +171,6 @@ Genera `PichangaApp/target/pichangaapp.jar`, ejecutable con `java -jar`.
 ## Modelo de datos
 
 Diez tablas: `usuario`, `cancha`, `horario`, `bloqueo_horario`, `reserva`, `pago`, `pichanga`, `pichanga_participante`, `calificacion` y `notificacion`.
-
-## Documentación
-
-- Informe del proyecto (APA 7): `Avance de Proyecto Final 1/Informe_Proyecto_PichangaApp_APA7_mejorado.docx`
-- Diagramas ER, de clases y BPMN: `Avance de Proyecto Final 1/diagramas/`
-- Matriz de trazabilidad RF/RNF y evaluación por rúbrica: misma carpeta
-
-## Prototipos de interfaz
-
-Prototipos de diseño previos a la implementación (no son capturas de la aplicación en ejecución):
-
-![Home](<Avance de Proyecto Final 1/assets/prototipo_3_home.png>)
-![Catálogo](<Avance de Proyecto Final 1/assets/prototipo_1_catalogo.png>)
 
 ## Licencia
 

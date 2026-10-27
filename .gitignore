@@ -58,8 +58,9 @@ node_modules/
 backup_*.drawio
 Aspose.Words.*.png
 
-# --- Archivos sueltos de mensajeria ---
+# --- Archivos que no se publican ---
 WhatsApp Image*
+Avance de Proyecto Final 1/
 
 # --- Sistema operativo ---
 Thumbs.db
