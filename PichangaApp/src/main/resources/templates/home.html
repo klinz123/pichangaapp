@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>PichangaApp · Reserva tu cancha en un clic</title>
+</head>
+<body>
+
+<main id="contenido">
+
+    <!-- ============================== Hero ============================== -->
+    <section class="hero">
+        <div class="hero__media">
+            <img th:src="@{/img/canchas/hero-cancha.jpg}"
+                 alt="Balón sobre césped sintético de una cancha de fútbol" width="1600" height="935">
+        </div>
+        <div class="hero__velo"></div>
+
+        <div class="contenedor hero__grid">
+            <div class="hero__contenido">
+                <span class="eyebrow eyebrow--claro">Reserva deportiva online · Lima</span>
+                <h1 class="hero__titulo">
+                    La cancha que buscas, <em>a un clic</em> de distancia.
+                </h1>
+                <p class="hero__bajada">
+                    Encuentra, reserva y paga canchas deportivas en tu distrito.
+                    Horarios en tiempo real, pago con Yape, Plin y tarjetas.
+                </p>
+
+                <div class="hero__acciones">
+                    <a class="boton boton--primario boton--grande" th:href="@{/canchas}">
+                        Buscar canchas <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                    <a class="boton boton--fantasma boton--grande" href="#como-funciona">
+                        Ver cómo funciona
+                    </a>
+                </div>
+
+                <ul class="hero__garantias">
+                    <li><i class="bi bi-shield-check" aria-hidden="true"></i> Pago seguro</li>
+                    <li><i class="bi bi-clock-history" aria-hidden="true"></i> Disponibilidad real</li>
+                    <li>
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                        <span><span th:text="${totalDistritos}">6</span> distritos</span>
+                    </li>
+                </ul>
+            </div>
+
+            <aside class="hero__panel" aria-label="Datos de la comunidad PichangaApp">
+                <p class="hero__panel-titulo">Hoy en PichangaApp</p>
+                <div class="metricas">
+                    <div class="metricas__item">
+                        <div class="metricas__valor" th:text="${totalCanchas}">120</div>
+                        <div class="metricas__etiqueta">Canchas registradas y activas</div>
+                    </div>
+                    <div class="metricas__item">
+                        <div class="metricas__valor" th:text="${totalPichangas}">24</div>
+                        <div class="metricas__etiqueta">Pichangas abiertas esperando jugadores</div>
+                    </div>
+                    <div class="metricas__item">
+                        <div class="metricas__valor" th:if="${promedioGeneral > 0}"
+                             th:text="|${#numbers.formatDecimal(promedioGeneral, 1, 1, 'POINT')} / 5|">4.8 / 5</div>
+                        <div class="metricas__valor" th:unless="${promedioGeneral > 0}">— / 5</div>
+                        <div class="metricas__etiqueta">Promedio de rating de las canchas afiliadas</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- ====================== Buscador que solapa el hero ====================== -->
+    <div class="contenedor buscador-envoltorio">
+        <form class="buscador" th:action="@{/canchas}" method="get" role="search"
+              aria-label="Buscar canchas por distrito, fecha y hora">
+            <div class="buscador__campo">
+                <label class="buscador__etiqueta" for="buscar-distrito">
+                    <i class="bi bi-geo-alt" aria-hidden="true"></i> Distrito
+                </label>
+                <select class="buscador__control" id="buscar-distrito" name="distrito">
+                    <option value="">Todos los distritos</option>
+                    <option th:each="d : ${distritos}" th:value="${d}" th:text="${d}"></option>
+                </select>
+            </div>
+
+            <div class="buscador__campo">
+                <label class="buscador__etiqueta" for="buscar-fecha">
+                    <i class="bi bi-calendar-event" aria-hidden="true"></i> Fecha
+                </label>
+                <input class="buscador__control" type="date" id="buscar-fecha" name="fecha">
+            </div>
+
+            <div class="buscador__campo">
+                <label class="buscador__etiqueta" for="buscar-hora">
+                    <i class="bi bi-clock" aria-hidden="true"></i> Hora
+                </label>
+                <input class="buscador__control" type="time" id="buscar-hora" name="hora">
+            </div>
+
+            <button class="boton boton--primario buscador__accion" type="submit">
+                <i class="bi bi-search" aria-hidden="true"></i> Buscar
+            </button>
+        </form>
+    </div>
+
+    <!-- ======================= Canchas destacadas ======================= -->
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Canchas destacadas</span>
+                    <h2>Las mejor calificadas</h2>
+                    <p class="texto-suave">
+                        Reserva por hora con confirmación inmediata y pago en línea.
+                    </p>
+                </div>
+                <a class="boton boton--contorno" th:href="@{/canchas}">
+                    Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            <div class="rejilla rejilla--3" th:if="${!#lists.isEmpty(canchasDestacadas)}">
+                <th:block th:each="tarjeta : ${canchasDestacadas}">
+                    <article th:replace="~{layout/base :: tarjetaCancha(${tarjeta})}"></article>
+                </th:block>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(canchasDestacadas)}">
+                <i class="bi bi-dribbble sin-datos__icono" aria-hidden="true"></i>
+                <p>Todavía no hay canchas publicadas. Vuelve pronto.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================= Pichangas abiertas ======================= -->
+    <section class="seccion seccion--destacada">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Comunidad</span>
+                    <h2>Pichangas abiertas</h2>
+                    <p class="texto-suave">
+                        Únete a un partido y completa el equipo. Sin coordinaciones por WhatsApp.
+                    </p>
+                </div>
+                <a class="boton boton--contorno" th:href="@{/pichangas}">
+                    Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            <div class="rejilla rejilla--3" th:if="${!#lists.isEmpty(pichangasDestacadas)}">
+                <article class="pichanga-item" th:each="p : ${pichangasDestacadas}">
+                    <div class="pichanga-item__top">
+                        <span class="estado estado--info" th:text="${p.nivel.etiqueta}">Intermedio</span>
+                        <span class="pichanga-item__fecha" th:text="${p.fecha}">2026-10-24</span>
+                    </div>
+
+                    <h3 class="pichanga-item__nombre" th:text="${p.cancha.nombre}">La Cancha</h3>
+
+                    <p class="pichanga-item__lugar">
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                        <span th:text="|${p.horaInicio} – ${p.horaFin} · ${p.cancha.distrito}|">20:00 – 21:00 · San Borja</span>
+                    </p>
+
+                    <p class="pichanga-item__desc" th:if="${p.descripcion != null}"
+                       th:text="${#strings.abbreviate(p.descripcion, 100)}">Pichanga de los jueves.</p>
+
+                    <div class="pichanga-item__meta">
+                        <span class="badge-cupos">
+                            <i class="bi bi-people" aria-hidden="true"></i>
+                            <span th:text="|${p.cuposDisponibles} de ${p.cuposTotal} cupos|">7 de 10 cupos</span>
+                        </span>
+                        <span class="pichanga-item__precio">
+                            <span th:replace="~{layout/base :: precio(${p.precioParticipante})}">S/ 10</span>
+                            <span class="precio__unidad">por jugador</span>
+                        </span>
+                    </div>
+
+                    <div class="barra-cupos" role="presentation">
+                        <div class="barra-cupos__relleno" th:style="|width:${p.porcentajeOcupado}%|"></div>
+                    </div>
+
+                    <a class="boton boton--contorno boton--pequeno boton--bloque" th:href="@{/pichangas}">
+                        Ver pichanga
+                    </a>
+                </article>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(pichangasDestacadas)}">
+                <i class="bi bi-people sin-datos__icono" aria-hidden="true"></i>
+                <p>No hay pichangas abiertas por ahora. Crea la tuya desde una reserva confirmada.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================= Cómo funciona ========================= -->
+    <section class="seccion" id="como-funciona">
+        <div class="contenedor">
+            <div class="encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Cómo funciona</span>
+                    <h2>Reserva en tres pasos</h2>
+                    <p class="texto-suave">
+                        Sin llamadas ni coordinaciones: eliges, pagas y juegas.
+                    </p>
+                </div>
+            </div>
+
+            <div class="pasos">
+                <div class="paso">
+                    <span class="paso__numero">1</span>
+                    <h3>Elige tu cancha</h3>
+                    <p>Filtra por distrito, superficie, precio y horario disponible.</p>
+                    <span class="paso__conector" aria-hidden="true"></span>
+                </div>
+                <div class="paso">
+                    <span class="paso__numero">2</span>
+                    <h3>Reserva y paga</h3>
+                    <p>Confirma tu franja y paga con Yape, Plin, tarjeta o Mercado Pago.</p>
+                    <span class="paso__conector" aria-hidden="true"></span>
+                </div>
+                <div class="paso">
+                    <span class="paso__numero">3</span>
+                    <h3>Juega y comparte</h3>
+                    <p>Recibe tu código de reserva y publica una pichanga para completar el equipo.</p>
+                    <span class="paso__conector" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================== CTA ============================== -->
+    <section class="seccion seccion--compacta">
+        <div class="contenedor">
+            <div class="cta-foto">
+                <div>
+                    <span class="eyebrow eyebrow--claro">Para propietarios</span>
+                    <h2>¿Tienes una cancha?</h2>
+                    <p>
+                        Publica tus horarios, recibe reservas y cobra en línea.
+                        Sin comisiones ocultas.
+                    </p>
+                </div>
+                <div class="fila">
+                    <a class="boton boton--primario boton--grande" th:if="${usuarioActual == null}" th:href="@{/registro}">
+                        Crear cuenta de propietario
+                    </a>
+                    <a class="boton boton--primario boton--grande" th:if="${usuarioActual != null}" th:href="@{/panel}">
+                        Ir a mi panel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Mis pichangas · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Tus pichangas</span>
+                    <h2>Mis pichangas</h2>
+                </div>
+                <a class="boton boton--primario" th:href="@{/pichangas/crear}">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i> Crear pichanga
+                </a>
+                <a class="boton boton--fantasma" th:href="@{/pichangas}">Ver abiertas</a>
+            </div>
+
+            <!-- Pichangas organizadas -->
+            <div th:if="${!#lists.isEmpty(organizadas)}">
+                <h3 style="margin: 2rem 0 1rem;">Organizadas por ti</h3>
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th style="text-align: left;">Cancha</th>
+                        <th style="text-align: left;">Fecha y hora</th>
+                        <th style="text-align: left;">Cupos</th>
+                        <th style="text-align: left;">Estado</th>
+                        <th style="text-align: left;">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${organizadas}">
+                        <td th:text="${p.cancha.nombre}">Cancha</td>
+                        <td th:text="|${p.fecha} ${p.horaInicio} – ${p.horaFin}|">2026-10-24 20:00</td>
+                        <td th:text="|${p.cuposOcupados} / ${p.cuposTotal}|">5 / 10</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${p.estado == p.estado.name() == 'LLENA'} ? 'badge--danger' : 'badge--exito'"
+                                  th:text="${p.estado.etiqueta}">Abierta</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/pichangas/{id}/cancelar(id=${p.id})}" method="post"
+                                  th:if="${p.estado.name() == 'ABIERTA' or p.estado.name() == 'LLENA'}"
+                                  data-confirmar="¿Cancelar esta pichanga?">
+                                <button type="submit" class="boton boton--peligro boton--pequeno">
+                                    Cancelar
+                                </button>
+                            </form>
+                            <a th:unless="${p.estado == p.estado.name() == 'ABIERTA' or p.estado == p.estado.name() == 'LLENA'}"
+                               class="boton boton--fantasma boton--pequeno" disabled>—</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pichangas participando -->
+            <div th:if="${!#lists.isEmpty(participando)}">
+                <h3 style="margin: 2rem 0 1rem;">Participando en</h3>
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th style="text-align: left;">Cancha</th>
+                        <th style="text-align: left;">Fecha y hora</th>
+                        <th style="text-align: left;">Estado</th>
+                        <th style="text-align: left;">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${participando}">
+                        <td th:text="${p.cancha.nombre}">Cancha</td>
+                        <td th:text="|${p.fecha} ${p.horaInicio} – ${p.horaFin}|">2026-10-24 20:00</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${p.estado == p.estado.name() == 'LLENA'} ? 'badge--danger' : 'badge--exito'"
+                                  th:text="${p.estado.etiqueta}">Abierta</span>
+                        </td>
+                        <td>
+                            <a class="boton boton--primario boton--pequeno"
+                               th:href="@{/pichangas/{id}(id=${p.id})}">Ver detalle</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(organizadas) and #lists.isEmpty(participando)}">
+                <i class="bi bi-calendar-event sin-datos__icono" aria-hidden="true"></i>
+                <p style="margin: 0;">No tienes pichangas organizadas ni participando en ninguna.</p>
+                <a class="boton boton--primario" th:href="@{/pichangas/crear}"
+                   style="margin-top: 1rem; display: inline-block;">Crear mi primera pichanga</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<style>
+    .tabla { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    table.tabla th, table.tabla td {
+        padding: .75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--pa-borde);
+    }
+    table.tabla th { background: var(--pa-superficie-2); font-size: var(--pa-pequeno); text-transform: uppercase; letter-spacing: .05em; color: var(--pa-texto-tenue); }
+    table.tabla tr:hover { background: var(--pa-superficie-2); }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: .25rem .6rem;
+        border-radius: var(--pa-radio-pill);
+        font-size: var(--pa-micro);
+        font-weight: 600;
+    }
+    .badge--exito { background: var(--pa-exito-suave); color: var(--pa-exito); }
+    .badge--danger { background: var(--pa-peligro-suave); color: var(--pa-peligro); }
+    .badge--secondary { background: #f1f5f9; color: var(--pa-texto-tenue); }
+    .badge--info { background: var(--pa-info-suave); color: var(--pa-info); }
+</style>
+
+</body>
+</html>

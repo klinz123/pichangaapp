@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Página no encontrada · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="error-pagina">
+        <div class="contenedor">
+            <div class="error-codigo" th:text="${codigo} ?: '404'">404</div>
+            <span class="eyebrow">Página no encontrada</span>
+            <h1>Esta cancha no existe</h1>
+            <p>
+                La dirección que buscas cambió de lugar o ya no está disponible.
+                Revisa el enlace o vuelve al inicio para seguir explorando canchas y pichangas.
+            </p>
+            <p class="texto-pequeno texto-tenue" th:if="${ruta != null}">
+                Ruta solicitada: <code th:text="${ruta}">/canchas/999</code>
+            </p>
+
+            <div class="fila">
+                <a class="boton boton--primario" th:href="@{/}">
+                    <i class="bi bi-house" aria-hidden="true"></i> Ir al inicio
+                </a>
+                <a class="boton boton--contorno" th:href="@{/reservas/mis-reservas}"
+                   th:if="${usuarioActual != null}">
+                    <i class="bi bi-calendar-check" aria-hidden="true"></i> Ver mi historial
+                </a>
+                <a class="boton boton--contorno" th:href="@{/login}"
+                   th:if="${usuarioActual == null}">
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

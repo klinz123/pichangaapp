@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Iniciar sesión · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="auth">
+        <div class="contenedor auth__grid">
+
+            <!-- Columna de contexto: refuerza la marca sin competir con el formulario -->
+            <div class="auth__lateral">
+                <span class="eyebrow">Reserva deportiva online</span>
+                <h1 style="font-size: 2.4rem;">Vuelve a la cancha.</h1>
+                <p class="texto-suave" style="max-width: 27rem;">
+                    Inicia sesión para reservar horarios, unirte a pichangas abiertas
+                    y administrar tus canchas en un solo lugar.
+                </p>
+
+                <div class="fila" style="gap: 1.5rem; margin-top: 2rem;">
+                    <span class="texto-pequeno texto-tenue">
+                        <i class="bi bi-shield-check" aria-hidden="true"></i> Pago seguro
+                    </span>
+                    <span class="texto-pequeno texto-tenue">
+                        <i class="bi bi-clock-history" aria-hidden="true"></i> Disponibilidad real
+                    </span>
+                    <span class="texto-pequeno texto-tenue">
+                        <i class="bi bi-people" aria-hidden="true"></i> Pichangas abiertas
+                    </span>
+                </div>
+            </div>
+
+            <!-- Columna del formulario -->
+            <div class="auth__formulario form-centrado">
+                <h2 style="font-size: 1.6rem;">Iniciar sesión</h2>
+                <p class="texto-pequeno texto-tenue" style="margin-bottom: 1.5rem;">
+                    Ingresa con el correo con el que creaste tu cuenta.
+                </p>
+
+                <!-- Mensajes de estado que llegan por query string -->
+                <div class="alerta alerta--error" role="alert" th:if="${param.error != null}">
+                    <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+                    <span>Correo o contraseña incorrectos. Revisa tus datos e inténtalo de nuevo.</span>
+                </div>
+
+                <div class="alerta alerta--info" role="status" data-auto-cierre th:if="${param.logout != null}">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                    <span>Cerraste sesión correctamente. Hasta la próxima pichanga.</span>
+                </div>
+
+                <div class="alerta alerta--aviso" role="status" data-auto-cierre th:if="${param.expirada != null}">
+                    <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+                    <span>Tu sesión expiró porque se abrió en otro dispositivo o estuvo inactiva demasiado tiempo.</span>
+                </div>
+
+                <!-- Si el layout ya muestra el flash mensajeExito, no se duplica aquí -->
+                <div class="alerta alerta--exito" role="status" data-auto-cierre
+                     th:if="${param.registrado != null and mensajeExito == null}">
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                    <span>Tu cuenta fue creada correctamente. Ya puedes iniciar sesión.</span>
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="campo">
+                        <label class="campo__etiqueta" for="email">Correo electrónico</label>
+                        <input class="control" id="email" name="email" type="email"
+                               autocomplete="username" required autofocus
+                               placeholder="tucorreo@ejemplo.com">
+                    </div>
+
+                    <div class="campo">
+                        <label class="campo__etiqueta" for="password">Contraseña</label>
+                        <input class="control" id="password" name="password" type="password"
+                               autocomplete="current-password" required
+                               placeholder="Tu contraseña">
+                    </div>
+
+                    <div class="campo">
+                        <label class="grupo-check" for="remember-me">
+                            <input type="checkbox" id="remember-me" name="remember-me">
+                            <span>Recordarme en este dispositivo durante 7 días</span>
+                        </label>
+                    </div>
+
+                    <button class="boton boton--primario boton--bloque" type="submit">
+                        Entrar <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </form>
+
+                <p class="auth__enlace-secundario">
+                    ¿Todavía no tienes cuenta?
+                    <a th:href="@{/registro}">Crear una cuenta</a>
+                </p>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

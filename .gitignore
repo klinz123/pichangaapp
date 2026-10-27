@@ -1,0 +1,87 @@
+# =========================================================
+# PichangaApp - repositorio raiz (codigo + documentacion)
+# =========================================================
+
+# --- Build Maven ---
+target/
+build/
+out/
+bin/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+*.war
+
+# --- Logs, volcados y diagnosticos ---
+logs/
+*.log
+*.log.gz
+*.gz
+*.dumpstream
+*.hprof
+hs_err_pid*
+replay_pid*
+
+# --- Configuracion local y secretos ---
+application-local.yml
+**/application-local.yml
+application-local.properties
+**/application-local.properties
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+secrets/
+
+# --- Herramientas locales ---
+.playwright-mcp/
+surefire-reports/
+*.exec
+node_modules/
+
+# --- Temporales de Office / draw.io / editores ---
+~$*
+.~lock.*
+.$*
+*.tmp
+*.bkp
+*.bak
+*.orig
+*.rej
+
+# --- Respaldos de entregables y artefactos de exportacion ---
+*_BACKUP.*
+backup_*.drawio
+Aspose.Words.*.png
+
+# --- Archivos sueltos de mensajeria ---
+WhatsApp Image*
+
+# --- Sistema operativo ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# --- IDEs ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
+nbproject/private/
+nbbuild/
+nbdist/
+/.nb-gradle/

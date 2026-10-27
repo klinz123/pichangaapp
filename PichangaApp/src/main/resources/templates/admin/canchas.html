@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Canchas · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Gestión de canchas</span>
+                    <h2>Todas las canchas</h2>
+                </div>
+                <a class="boton boton--fantasma" th:href="@{/admin}">Volver al panel admin</a>
+            </div>
+
+            <div class="tabla-responsive" th:if="${!#lists.isEmpty(canchas)}">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th style="text-align: left;">Nombre</th>
+                        <th style="text-align: left;">Propietario</th>
+                        <th style="text-align: left;">Ubicación</th>
+                        <th style="text-align: left;">Precio/hora</th>
+                        <th style="text-align: left;">Estado</th>
+                        <th style="text-align: left;">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${canchas}">
+                        <td th:text="${c.nombre}">Cancha</td>
+                        <td th:text="${c.propietario.nombre}">Propietario</td>
+                        <td th:text="${c.ubicacion}">Dirección</td>
+                        <td><span th:replace="~{layout/base :: precio(${c.precioHora})}">S/ 80</span></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${c.activa} ? 'badge--exito' : 'badge--secondary'"
+                                  th:text="${c.activa} ? 'Activa' : 'Inactiva'">Activa</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/canchas/{id}/estado(id=${c.id})}" method="post"
+                                  data-confirmar="¿Cambiar el estado de esta cancha?">
+                                <input type="hidden" name="activa" th:value="${!c.activa}"/>
+                                <button type="submit" class="boton boton--fantasma boton--pequeno"
+                                        th:text="${c.activa} ? 'Desactivar' : 'Activar'"></button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(canchas)}">
+                <p style="margin: 0;">No hay canchas registradas.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<style>
+    .tabla-responsive { overflow-x: auto; margin-top: 1rem; }
+    table.tabla { width: 100%; border-collapse: collapse; }
+    table.tabla th, table.tabla td {
+        padding: .75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--pa-borde);
+    }
+    table.tabla th { background: var(--pa-superficie-2); font-size: var(--pa-pequeno); text-transform: uppercase; letter-spacing: .05em; color: var(--pa-texto-tenue); }
+    table.tabla tr:hover { background: var(--pa-superficie-2); }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: .25rem .6rem;
+        border-radius: var(--pa-radio-pill);
+        font-size: var(--pa-micro);
+        font-weight: 600;
+    }
+    .badge--exito { background: var(--pa-exito-suave); color: var(--pa-exito); }
+    .badge--secondary { background: #f1f5f9; color: var(--pa-texto-tenue); }
+</style>
+
+</body>
+</html>

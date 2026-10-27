@@ -1,0 +1,84 @@
+# ===== PichangaApp =====
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### VS Code ###
+.vscode/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### Logs y datos locales ###
+logs/
+*.log
+*.gz
+uploads/
+.env
+*.env.local
+
+### Sistema operativo ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+### Configuracion local y secretos ###
+application-local.yml
+**/application-local.yml
+application-local.properties
+**/application-local.properties
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+### Herramientas locales ###
+.playwright-mcp/
+surefire-reports/
+*.exec
+*.dumpstream
+
+### Volcados y diagnostico de la JVM ###
+*.hprof
+hs_err_pid*
+replay_pid*
+
+### Temporales de Office / draw.io / editores ###
+~$*
+.~lock.*
+.$*
+*.tmp
+*.bkp
+*.bak
+*.orig
+*.rej
+
+### Respaldos de entregables y artefactos de exportacion ###
+*_BACKUP.*
+backup_*.drawio
+Aspose.Words.*.png

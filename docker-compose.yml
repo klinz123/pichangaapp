@@ -1,0 +1,57 @@
+# Entorno local de PichangaApp: SQL Server 2022 en Docker.
+#
+#   docker compose up -d
+#
+# El servicio sqlserver-init crea la base PichangaApp, el login de la
+# aplicacion y sus permisos. Las tablas las crea schema.sql al arrancar
+# la aplicacion.
+#
+# Variables opcionales (por defecto coinciden con application-local.yml.example):
+#   MSSQL_SA_PASSWORD, DB_USER, DB_PASSWORD
+# Evita usar "$" en las contrasenas: las expande el shell del contenedor.
+
+name: pichangaapp
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: pichangaapp-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-Pichanga#2026!Root}"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -b -Q "SELECT 1"
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: pichangaapp-sqlserver-init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-Pichanga#2026!Root}"
+      DB_USER: "${DB_USER:-pichanga_app}"
+      DB_PASSWORD: "${DB_PASSWORD:-Pichanga#2026}"
+    volumes:
+      - ./PichangaApp/database/init-db.sql:/scripts/init-db.sql:ro
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - >
+        /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" -C -b
+        -v DB_USER="$$DB_USER" -v DB_PASSWORD="$$DB_PASSWORD"
+        -i /scripts/init-db.sql
+    restart: "no"
+
+volumes:
+  mssql-data:

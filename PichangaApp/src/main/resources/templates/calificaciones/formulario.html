@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Calificar cancha · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre" style="margin-bottom: 1.5rem;">
+                <a class="boton boton--fantasma boton--pequeno" th:href="@{/reservas/mis-reservas}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a mis reservas
+                </a>
+                <span class="texto-pequeno texto-tenue" th:text="|Reserva ${reserva.codigo}|"></span>
+            </div>
+
+            <div class="tarjeta">
+                <h3 style="margin-top: 0;">Calificar tu experiencia</h3>
+                <p class="texto-suave" style="margin-bottom: 1.5rem;" th:text="|¿Cómo estuvo tu reserva en ${reserva.cancha.nombre} el ${reserva.fecha} a las ${reserva.horaInicio}?|"></p>
+
+                <form th:action="@{/calificaciones}" method="post">
+                    <input type="hidden" name="reservaId" th:value="${reserva.id}"/>
+
+                    <div class="campo" style="margin-bottom: 1rem;">
+                        <span class="campo__etiqueta">Calificación (estrellas)</span>
+                        <div class="calificacion-estrellas" role="radiogroup" aria-label="Calificación de 1 a 5 estrellas">
+                            <th:block th:each="i : ${#numbers.sequence(5, 1)}">
+                                <input type="radio" name="puntaje"
+                                       th:id="|puntaje-${i}|"
+                                       th:value="${i}"
+                                       th:checked="${calificacionForm.puntaje == i}"
+                                       th:attr="aria-label=${i == 1 ? '1 estrella' : i + ' estrellas'}"
+                                       required/>
+                                <label th:attr="for=|puntaje-${i}|" th:title="${i} + ' estrellas'">★</label>
+                            </th:block>
+                        </div>
+                        <p class="campo__ayuda">Selecciona cuántas estrellas le das a la cancha.</p>
+                    </div>
+
+                    <div class="campo" style="margin-bottom: 1rem;">
+                        <label class="campo__etiqueta">Comentario (opcional)</label>
+                        <textarea name="comentario" class="control"
+                                  placeholder="Cuéntanos qué te pareció la cancha, el servicio, la limpieza..."></textarea>
+                    </div>
+
+                    <button type="submit" class="boton boton--primario boton--grande" style="width: 100%;">
+                        Enviar calificación
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

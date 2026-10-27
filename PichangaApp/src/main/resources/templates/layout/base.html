@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<!--
+  Layout base de PichangaApp.
+  Patron "layout sin dialecto": cada pagina se declara con
+  th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}".
+  La pagina debe declarar su propio <main id="contenido"> para conservar
+  el destino del enlace "Saltar al contenido".
+-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="pagina(titulo, contenido)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#08231a">
+    <meta name="description" content="Reserva canchas deportivas por hora y únete a pichangas abiertas en Lima. Horarios en tiempo real y pago en línea.">
+    <title th:replace="${titulo}">PichangaApp</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap-icons/bootstrap-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
+
+<header th:replace="~{layout/base :: barra}"></header>
+
+<!-- Mensajes flash comunes a todas las vistas -->
+<div class="contenedor" style="margin-top: 1rem;"
+     th:if="${mensajeExito != null or mensajeError != null or mensajeInfo != null or mensajeAviso != null}">
+    <div class="alerta alerta--exito" role="status" data-auto-cierre th:if="${mensajeExito != null}">
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+        <span th:text="${mensajeExito}">Operación completada.</span>
+    </div>
+    <div class="alerta alerta--error" role="alert" th:if="${mensajeError != null}">
+        <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+        <span th:text="${mensajeError}">Ocurrió un error.</span>
+    </div>
+    <div class="alerta alerta--info" role="status" data-auto-cierre th:if="${mensajeInfo != null}">
+        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+        <span th:text="${mensajeInfo}">Información.</span>
+    </div>
+    <div class="alerta alerta--aviso" role="status" data-auto-cierre th:if="${mensajeAviso != null}">
+        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+        <span th:text="${mensajeAviso}">Atención.</span>
+    </div>
+</div>
+
+<main id="contenido" th:replace="${contenido}"></main>
+
+<div th:replace="~{layout/base :: pie}"></div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+
+
+<!-- ============================ Barra superior ============================ -->
+<!-- th:remove="all" evita que el fragmento se renderice en su lugar de definición;
+     solo se renderiza donde se usa th:replace="~{layout/base :: barra}" -->
+<div th:remove="all">
+    <header th:fragment="barra" class="barra" data-barra>
+        <div class="contenedor barra__interior">
+            <a class="marca" th:href="@{/}" aria-label="PichangaApp, ir al inicio">
+                <span class="marca__balon" aria-hidden="true"><i class="bi bi-dribbble"></i></span>
+                <span class="marca__texto">Pichanga<span class="marca__punto">.</span></span>
+            </a>
+
+            <nav class="barra__enlaces" aria-label="Navegación principal">
+                <a class="barra__enlace" th:href="@{/canchas}">Explorar canchas</a>
+                <a class="barra__enlace" th:href="@{/pichangas}">Pichangas</a>
+                <a class="barra__enlace" th:href="@{/reservas/mis-reservas}" th:if="${usuarioActual != null}">Mis reservas</a>
+                <a class="barra__enlace" th:href="@{/login}" th:if="${usuarioActual == null}">Ingresar</a>
+            </nav>
+
+            <div class="barra__acciones">
+                <!-- Visitante -->
+                <a class="boton boton--primario boton--pequeno" th:href="@{/registro}"
+                   th:if="${usuarioActual == null}">
+                    <i class="bi bi-person-plus" aria-hidden="true"></i> Crear cuenta
+                </a>
+
+                <!-- Usuario autenticado -->
+                <div class="usuario-menu" th:if="${usuarioActual != null}" data-menu-usuario>
+                    <button type="button" class="usuario-boton" aria-haspopup="true" aria-expanded="false">
+                        <span class="avatar" th:text="${usuarioActual.iniciales}">JP</span>
+                        <span th:text="${usuarioActual.primerNombre}">Juan</span>
+                        <i class="bi bi-chevron-down texto-tenue" aria-hidden="true"></i>
+                    </button>
+
+                    <div class="menu-flotante" role="menu">
+                        <div class="menu-flotante__titulo">
+                            <span th:text="${usuarioActual.rol.etiqueta}">Jugador</span>
+                            <span class="sello-verificado" th:if="${usuarioActual.verificado}">
+                                <i class="bi bi-patch-check-fill" aria-hidden="true"></i> Verificado
+                            </span>
+                        </div>
+
+                        <a th:href="@{/perfil}" role="menuitem"><i class="bi bi-person" aria-hidden="true"></i> Mi perfil</a>
+                        <a th:href="@{/reservas/mis-reservas}" role="menuitem"><i class="bi bi-calendar-check" aria-hidden="true"></i> Mis reservas</a>
+                        <a th:href="@{/notificaciones}" role="menuitem">
+                            <i class="bi bi-bell" aria-hidden="true"></i> Notificaciones
+                            <span class="punto-contador" th:if="${notificacionesNoLeidas > 0}"
+                                  th:text="${notificacionesNoLeidas}">3</span>
+                        </a>
+                        <a th:href="@{/pichangas/crear}" role="menuitem"
+                           th:if="${usuarioActual.rol.name() == 'JUGADOR'}">
+                            <i class="bi bi-people" aria-hidden="true"></i> Crear pichanga
+                        </a>
+
+                        <th:block th:if="${usuarioActual.esPropietario() or usuarioActual.esAdmin()}">
+                            <hr>
+                        </th:block>
+
+                        <a th:href="@{/panel}" role="menuitem" th:if="${usuarioActual.esPropietario()}">
+                            <i class="bi bi-speedometer2" aria-hidden="true"></i> Panel del propietario
+                        </a>
+                        <a th:href="@{/admin}" role="menuitem" th:if="${usuarioActual.esAdmin()}">
+                            <i class="bi bi-shield-lock" aria-hidden="true"></i> Administración
+                        </a>
+
+                        <hr>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" role="menuitem">
+                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <button class="barra__toggle" type="button" data-barra-toggle
+                        aria-controls="menu-movil" aria-expanded="false" aria-label="Abrir menú">
+                    <i class="bi bi-list" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navegación móvil -->
+        <div class="barra__panel" id="menu-movil" data-barra-panel>
+            <nav class="barra__enlaces" aria-label="Navegación móvil">
+                <a class="barra__enlace" th:href="@{/canchas}">Explorar canchas</a>
+                <a class="barra__enlace" th:href="@{/pichangas}">Pichangas</a>
+                <a class="barra__enlace" th:href="@{/reservas/mis-reservas}" th:if="${usuarioActual != null}">Mis reservas</a>
+                <a class="barra__enlace" th:href="@{/notificaciones}" th:if="${usuarioActual != null}">Notificaciones</a>
+                <a class="barra__enlace" th:href="@{/login}" th:if="${usuarioActual == null}">Ingresar</a>
+                <a class="barra__enlace" th:href="@{/registro}" th:if="${usuarioActual == null}">Crear cuenta</a>
+                <a class="barra__enlace" th:href="@{/panel}" th:if="${usuarioActual != null and usuarioActual.esPropietario()}">Panel del propietario</a>
+                <a class="barra__enlace" th:href="@{/admin}" th:if="${usuarioActual != null and usuarioActual.esAdmin()}">Administración</a>
+            </nav>
+        </div>
+    </header>
+</div>
+
+
+<!-- ============================== Pie de pagina ============================== -->
+<!-- th:remove="all" evita que el fragmento se renderice en su lugar de definición;
+     solo se renderiza donde se usa th:replace="~{layout/base :: pie}" -->
+<div th:remove="all">
+    <footer th:fragment="pie" class="pie">
+        <div class="contenedor pie__contenido">
+            <div class="pie__marca">
+                <a class="marca" th:href="@{/}">
+                    <span class="marca__balon" aria-hidden="true"><i class="bi bi-dribbble"></i></span>
+                    <span class="marca__texto">Pichanga<span class="marca__punto">.</span></span>
+                </a>
+                <p>
+                    Reserva canchas deportivas por hora y organiza pichangas
+                    con cupos abiertos en Lima.
+                </p>
+                <p class="texto-pequeno" style="color: rgba(255,255,255,.42);">
+                    Fotografías ilustrativas con licencia libre.
+                    <a th:href="@{/img/ATTRIBUTION.md}" target="_blank" rel="noopener"
+                       style="color: rgba(255,255,255,.62); text-decoration: underline;">Ver créditos</a>.
+                </p>
+            </div>
+
+            <div>
+                <h2 class="pie__titulo">Navegación</h2>
+                <nav class="pie__nav" aria-label="Navegación del pie">
+                    <a th:href="@{/}">Inicio</a>
+                    <a th:href="@{/canchas}">Canchas</a>
+                    <a th:href="@{/pichangas}">Pichangas</a>
+                    <a th:href="@{/reservas/mis-reservas}" th:if="${usuarioActual != null}">Mis reservas</a>
+                    <a th:href="@{/login}" th:if="${usuarioActual == null}">Iniciar sesión</a>
+                    <a th:href="@{/registro}" th:if="${usuarioActual == null}">Crear cuenta</a>
+                </nav>
+            </div>
+
+            <div>
+                <h2 class="pie__titulo">Soporte</h2>
+                <div class="pie__contacto">
+                    <span>
+                        <i class="bi bi-envelope" aria-hidden="true"></i>
+                        soporte@pichangaapp.pe
+                    </span>
+                    <span>
+                        <i class="bi bi-clock" aria-hidden="true"></i>
+                        Lun - Dom · 6:00 a 23:00
+                    </span>
+                    <span>
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                        Lima, Perú
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="contenedor pie__copia">
+            <p>&copy; 2026 PichangaApp. Proyecto académico de Ingeniería de Software.</p>
+            <p>Precios en soles (S/) · Zona horaria America/Lima</p>
+        </div>
+    </footer>
+</div>
+
+
+<!-- ========================= Utilidades de plantilla ========================= -->
+
+<!-- Importe en soles sin decimales innecesarios: S/ 80 o S/ 95.50 -->
+<!-- th:remove="all" evita que este fragmento se renderice solo en la página -->
+<div th:remove="all">
+    <span th:fragment="precio(valor)" class="precio"
+          th:text="${valor == null} ? 'S/ –' : 'S/ ' + ${#strings.replace(#numbers.formatDecimal(valor, 1, 2, 'POINT'), '.00', '')}">S/ 0</span>
+</div>
+
+<!-- Estrellas de una calificacion 1..5 -->
+<!-- th:remove="all" evita que este fragmento se renderice solo en la página -->
+<div th:remove="all">
+    <span th:fragment="estrellas(puntaje)" class="estrellas" role="img"
+          th:attr="aria-label='Calificación ' + ${puntaje} + ' de 5'">
+        <i class="bi" th:classappend="${puntaje >= 1} ? 'bi-star-fill' : 'bi-star vacia'" aria-hidden="true"></i>
+        <i class="bi" th:classappend="${puntaje >= 2} ? 'bi-star-fill' : 'bi-star vacia'" aria-hidden="true"></i>
+        <i class="bi" th:classappend="${puntaje >= 3} ? 'bi-star-fill' : 'bi-star vacia'" aria-hidden="true"></i>
+        <i class="bi" th:classappend="${puntaje >= 4} ? 'bi-star-fill' : 'bi-star vacia'" aria-hidden="true"></i>
+        <i class="bi" th:classappend="${puntaje >= 5} ? 'bi-star-fill' : 'bi-star vacia'" aria-hidden="true"></i>
+    </span>
+</div>
+
+<!-- Tarjeta de cancha reutilizable. Recibe un CanchaTarjeta ya resuelto.
+     La foto se elige de forma determinista por id para que cada cancha
+     mantenga siempre la misma imagen entre visitas. -->
+<div th:remove="all">
+    <article th:fragment="tarjetaCancha(tarjeta)" class="cancha-card"
+             th:if="${tarjeta != null}">
+        <div class="cancha-card__foto">
+            <img th:src="@{'/img/canchas/cancha-' + ${tarjeta.id % 7 + 1} + '.jpg'}"
+                 alt="" loading="lazy" width="800" height="500">
+            <div class="cancha-card__foto-overlay"></div>
+
+            <span class="cancha-card__chip">
+                <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i>
+                <span th:text="${tarjeta.superficie}">Césped sintético</span>
+            </span>
+
+            <span class="cancha-card__rating" th:unless="${tarjeta.sinResenas}">
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <span th:text="${tarjeta.promedioTexto}">4.5</span>
+            </span>
+
+            <div class="cancha-card__foto-icono">
+                <span class="badge-cupos" style="color: #fff;">
+                    <i class="bi bi-people" aria-hidden="true"></i>
+                    <span th:text="${tarjeta.capacidad} + ' jugadores'">10 jugadores</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="cancha-card__cuerpo">
+            <h3 class="cancha-card__nombre" th:text="${tarjeta.nombre}">Complejo Deportivo La Cancha</h3>
+            <p class="cancha-card__direccion">
+                <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                <span th:text="${tarjeta.ubicacion}">Av. Aviación 2450, San Borja</span>
+            </p>
+
+            <div class="cancha-card__meta">
+                <span th:replace="~{layout/base :: estrellas(${tarjeta.estrellas})}"></span>
+                <span th:unless="${tarjeta.sinResenas}"
+                      th:text="|${tarjeta.promedioTexto} · ${tarjeta.resenasTexto}|">4.5 · 8 reseñas</span>
+                <span th:if="${tarjeta.sinResenas}" class="texto-tenue">Sin reseñas</span>
+            </div>
+        </div>
+
+        <div class="cancha-card__pie">
+            <div>
+                <span th:replace="~{layout/base :: precio(${tarjeta.precioHora})}">S/ 80</span>
+                <span class="precio__unidad">/ hora</span>
+            </div>
+            <a class="cancha-card__boton" th:href="@{/canchas/{id}(id=${tarjeta.id})}">
+                Ver horarios <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </div>
+    </article>
+</div>
+
+</body>
+</html>

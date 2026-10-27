@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Reservas · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Reservas de mis canchas</span>
+                    <h2>Reservas</h2>
+                </div>
+                <a class="boton boton--fantasma" th:href="@{/panel}">Volver al panel</a>
+            </div>
+
+            <form class="filtros tarjeta" th:action="@{/panel/reservas}" method="get">
+                <div class="fila fila--entre fila--ajustar" style="gap: 1rem;">
+                    <div class="campo">
+                        <label class="campo__etiqueta">Desde</label>
+                        <input type="date" name="desde" class="control"
+                               th:value="${#temporals.format(desde, 'yyyy-MM-dd')}"/>
+                    </div>
+                    <div class="campo">
+                        <label class="campo__etiqueta">Hasta</label>
+                        <input type="date" name="hasta" class="control"
+                               th:value="${#temporals.format(hasta, 'yyyy-MM-dd')}"/>
+                    </div>
+                    <button type="submit" class="boton boton--primario">Filtrar</button>
+                    <a class="boton boton--fantasma" th:href="@{/panel/reservas}">Limpiar</a>
+                </div>
+            </form>
+
+            <div class="tabla-responsive" th:if="${!#lists.isEmpty(reservas)}">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th style="text-align: left;">Código</th>
+                        <th style="text-align: left;">Cancha</th>
+                        <th style="text-align: left;">Jugador</th>
+                        <th style="text-align: left;">Fecha y hora</th>
+                        <th style="text-align: left;">Estado</th>
+                        <th style="text-align: left;">Total</th>
+                        <th style="text-align: left;">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${reservas}">
+                        <td><code th:text="${r.codigo}">PIC-XXXX</code></td>
+                        <td th:text="${r.cancha.nombre}">Cancha</td>
+                        <td th:text="${r.usuario.nombre}">Jugador</td>
+                        <td th:text="|${r.fecha} ${r.horaInicio}|">2026-10-24 20:00</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${r.estado.color}"
+                                  th:text="${r.estado.etiqueta}">Pendiente</span>
+                        </td>
+                        <td><span th:replace="~{layout/base :: precio(${r.precioTotal})}">S/ 80</span></td>
+                        <td>
+                            <form th:action="@{/panel/reservas/{id}/cancelar(id=${r.id})}" method="post"
+                                  th:if="${r.estado.estaVigente()}"
+                                  data-confirmar="¿Cancelar esta reserva?">
+                                <button type="submit" class="boton boton--peligro boton--pequeno">
+                                    Cancelar
+                                </button>
+                            </form>
+                            <span th:unless="${r.estado.estaVigente()}"
+                                  class="texto-pequeno texto-tenue">—</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(reservas)}">
+                <i class="bi bi-calendar-x sin-datos__icono" aria-hidden="true"></i>
+                <p style="margin: 0;">No hay reservas en el rango seleccionado.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<style>
+    .tabla-responsive { overflow-x: auto; margin-top: 1rem; }
+    table.tabla { width: 100%; border-collapse: collapse; }
+    table.tabla th, table.tabla td {
+        padding: .75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--pa-borde);
+    }
+    table.tabla th { background: var(--pa-superficie-2); font-size: var(--pa-pequeno); text-transform: uppercase; letter-spacing: .05em; color: var(--pa-texto-tenue); }
+    table.tabla tr:hover { background: var(--pa-superficie-2); }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: .25rem .6rem;
+        border-radius: var(--pa-radio-pill);
+        font-size: var(--pa-micro);
+        font-weight: 600;
+    }
+    .badge--exito { background: var(--pa-exito-suave); color: var(--pa-exito); }
+    .badge--warning { background: var(--pa-advertencia-suave); color: var(--pa-advertencia); }
+    .badge--secondary { background: #f1f5f9; color: var(--pa-texto-tenue); }
+    .badge--danger { background: var(--pa-peligro-suave); color: var(--pa-peligro); }
+    .badge--dark { background: #e2e8f0; color: var(--pa-navy); }
+    .badge--info { background: var(--pa-info-suave); color: var(--pa-info); }
+</style>
+
+</body>
+</html>

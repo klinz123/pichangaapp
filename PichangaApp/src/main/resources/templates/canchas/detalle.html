@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title th:text="|${cancha.nombre} · PichangaApp|">Cancha · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre" style="margin-bottom: 1rem;">
+                <a class="boton boton--fantasma boton--pequeno" th:href="@{/canchas}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a canchas
+                </a>
+                <span class="texto-pequeno texto-tenue"
+                      th:text="|${cancha.distrito} · ${cancha.direccion}|"></span>
+            </div>
+
+            <!-- Cabecera con foto real de la cancha -->
+            <div class="cancha-hero">
+                <img th:src="@{'/img/canchas/cancha-' + ${cancha.id % 7 + 1} + '.jpg'}"
+                     alt="" width="1600" height="900">
+                <div>
+                    <span class="eyebrow eyebrow--claro" th:text="${cancha.superficie.etiqueta}">Césped sintético</span>
+                    <h1 th:text="${cancha.nombre}">Complejo Deportivo</h1>
+                    <p th:if="${cancha.descripcion != null}" th:text="${cancha.descripcion}">
+                        Descripcion de la cancha.
+                    </p>
+
+                    <div class="cancha-hero__datos">
+                        <span>
+                            <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                            <span th:text="${cancha.direccion}">Av. Aviación 2450</span>
+                        </span>
+                        <span>
+                            <i class="bi bi-people" aria-hidden="true"></i>
+                            <span th:text="${cancha.capacidad} + ' jugadores'">10 jugadores</span>
+                        </span>
+                        <span>
+                            <i class="bi bi-clock" aria-hidden="true"></i>
+                            <span th:text="|${cancha.horaApertura} – ${cancha.horaCierre}|">08:00 – 22:00</span>
+                        </span>
+                        <span>
+                            <i class="bi bi-cash-coin" aria-hidden="true"></i>
+                            <span th:replace="~{layout/base :: precio(${cancha.precioHora})}">S/ 80</span>
+                            <span>/ hora</span>
+                        </span>
+                    </div>
+
+                    <a class="boton boton--primario" href="#horarios" style="margin-top: 1.25rem;">
+                        <i class="bi bi-calendar-check" aria-hidden="true"></i> Reservar ahora
+                    </a>
+                </div>
+            </div>
+
+            <!-- Selector de fecha y parrilla de horarios -->
+            <div class="tarjeta" id="horarios">
+                <div class="fila fila--entre" style="gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <h2 style="margin: 0 0 0.25rem; font-size: 1.4rem;">Selecciona tu horario</h2>
+                        <p class="texto-pequeno texto-suave" style="margin: 0;">
+                            Elige una franja disponible: pasarás a confirmar la reserva y completar el pago.
+                        </p>
+                    </div>
+
+                    <form method="get" class="fila" style="gap: 0.5rem; align-items: flex-end;"
+                          th:action="@{/canchas/{id}(id=${cancha.id})}">
+                        <div class="campo" style="margin: 0;">
+                            <label class="campo__etiqueta" for="fecha-horarios">Fecha</label>
+                            <input type="date" id="fecha-horarios" name="fecha" class="control"
+                                   style="max-width: 190px;"
+                                   th:value="${#temporals.format(fecha, 'yyyy-MM-dd')}"
+                                   th:attr="min=${#temporals.format(fecha, 'yyyy-MM-dd')}"/>
+                        </div>
+                        <button type="submit" class="boton boton--contorno">Ver horarios</button>
+                    </form>
+                </div>
+
+                <div class="parrilla">
+                    <th:block th:each="franja : ${franjas}">
+                        <a class="franja franja--libre"
+                           th:if="${franja.libre}"
+                           th:href="@{/reservas/nueva/{id}(id=${cancha.id},
+                                     fecha=${#temporals.format(fecha, 'yyyy-MM-dd')},
+                                     hora=${#temporals.format(franja.inicio, 'HH:mm')})}">
+                            <span class="franja__hora" th:text="${franja.rango}">09:00 – 10:00</span>
+                            <span class="franja__precio"
+                                  th:replace="~{layout/base :: precio(${franja.precio})}">S/ 80</span>
+                        </a>
+
+                        <button type="button" class="franja franja--ocupada" disabled
+                                th:unless="${franja.libre}">
+                            <span class="franja__hora" th:text="${franja.rango}">09:00 – 10:00</span>
+                            <span class="franja__estado texto-pequeno" th:text="${franja.estado.etiqueta}">Reservada</span>
+                        </button>
+                    </th:block>
+                </div>
+
+                <div class="sin-datos" th:if="${#lists.isEmpty(franjas)}" style="margin-top: 1rem;">
+                    <p style="margin: 0;">No hay horarios disponibles para esta fecha.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

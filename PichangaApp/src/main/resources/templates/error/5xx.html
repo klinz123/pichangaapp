@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Error del servidor · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="error-pagina">
+        <div class="contenedor">
+            <div class="error-codigo" th:text="${codigo} ?: '500'">500</div>
+            <span class="eyebrow">Algo salió mal</span>
+            <h1>Estamos trabajando en ello</h1>
+            <p>
+                Ocurrió un error inesperado al procesar tu solicitud.
+                Vuelve a intentarlo en unos minutos; si el problema continúa,
+                escríbenos a <a href="mailto:soporte@pichangaapp.pe">soporte@pichangaapp.pe</a>.
+            </p>
+            <p class="texto-pequeno texto-tenue" th:if="${ruta != null}">
+                Ruta solicitada: <code th:text="${ruta}">/panel</code>
+            </p>
+
+            <div class="fila">
+                <a class="boton boton--primario" th:href="@{/}">
+                    <i class="bi bi-house" aria-hidden="true"></i> Volver al inicio
+                </a>
+                <a class="boton boton--contorno" th:href="@{/reservas/mis-reservas}"
+                   th:if="${usuarioActual != null}">
+                    <i class="bi bi-calendar-check" aria-hidden="true"></i> Ir a mi historial
+                </a>
+                <a class="boton boton--contorno" th:href="@{/login}"
+                   th:if="${usuarioActual == null}">
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

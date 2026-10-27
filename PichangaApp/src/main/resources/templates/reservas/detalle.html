@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title th:text="|Reserva ${reserva.codigo} · PichangaApp|">Reserva · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor-angosto">
+            <div class="fila fila--entre" style="margin-bottom: 1.25rem;">
+                <a class="boton boton--fantasma boton--pequeno" th:href="@{/reservas/mis-reservas}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a mis reservas
+                </a>
+                <span class="texto-pequeno texto-tenue" th:text="${reserva.codigo}">PIC-XXXX</span>
+            </div>
+
+            <div class="tarjeta">
+                <div class="fila fila--entre" style="gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <span class="eyebrow">Detalle de la reserva</span>
+                        <h2 style="margin: 0.5rem 0 0;" th:text="${reserva.cancha.nombre}">Cancha</h2>
+                    </div>
+                    <span class="badge" th:classappend="${reserva.estado.color}"
+                          th:text="${reserva.estado.etiqueta}">Confirmada</span>
+                </div>
+
+                <div class="tabla-responsive">
+                    <table class="tabla">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Código</th>
+                            <td><code th:text="${reserva.codigo}">PIC-XXXX</code></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Cancha</th>
+                            <td th:text="|${reserva.cancha.nombre} · ${reserva.cancha.distrito}|">Cancha · Distrito</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Dirección</th>
+                            <td th:text="${reserva.cancha.direccion}">Av. Ejemplo 123</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Fecha</th>
+                            <td th:text="${reserva.fecha}">2026-10-27</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Horario</th>
+                            <td th:text="|${reserva.horaInicio} – ${reserva.horaFin}|">07:00 – 08:00</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total</th>
+                            <td>
+                                <span th:replace="~{layout/base :: precio(${reserva.precioTotal})}">S/ 80</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Pago</th>
+                            <td>
+                                <span class="badge badge--exito" th:if="${pagoService.estaPagada(reserva)}">Pagado</span>
+                                <span class="badge badge--advertencia" th:unless="${pagoService.estaPagada(reserva)}">Pendiente</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alerta alerta--aviso" role="status"
+                     th:if="${reserva.estado.estaVigente() and !pagoService.estaPagada(reserva)}">
+                    <i class="bi bi-clock" aria-hidden="true"></i>
+                    <span>
+                        Esta reserva expira si no completas el pago. Después, el horario se libera
+                        automáticamente.
+                    </span>
+                </div>
+
+                <div class="fila" style="gap: 0.6rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a class="boton boton--primario"
+                       th:if="${reserva.estado.estaVigente() and !pagoService.estaPagada(reserva)}"
+                       th:href="@{/pagos/{id}(id=${reserva.id})}">
+                        <i class="bi bi-credit-card" aria-hidden="true"></i> Pagar ahora
+                    </a>
+
+                    <a class="boton boton--contorno" th:if="${puedeCalificar}"
+                       th:href="@{/calificaciones/{id}(id=${reserva.id})}">
+                        <i class="bi bi-star" aria-hidden="true"></i> Calificar cancha
+                    </a>
+
+                    <a class="boton boton--contorno"
+                       th:href="@{/canchas/{id}(id=${reserva.cancha.id})}">
+                        <i class="bi bi-calendar-plus" aria-hidden="true"></i> Volver a reservar
+                    </a>
+
+                    <form th:if="${reserva.estado.estaVigente()}"
+                          th:action="@{/reservas/{id}/cancelar(id=${reserva.id})}" method="post"
+                          data-confirmar="¿Seguro que quieres cancelar esta reserva? Se aplicará la política de reembolso."
+                          style="display: inline;">
+                        <button type="submit" class="boton boton--peligro">
+                            <i class="bi bi-x-circle" aria-hidden="true"></i> Cancelar reserva
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

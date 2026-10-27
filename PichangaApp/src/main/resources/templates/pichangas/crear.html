@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Crear pichanga · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre" style="margin-bottom: 1.5rem;">
+                <a class="boton boton--fantasma boton--pequeno" th:href="@{/pichangas}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a pichangas
+                </a>
+            </div>
+
+            <div class="tarjeta">
+                <h3 style="margin-top: 0;">Crear pichanga</h3>
+                <p class="texto-suave" style="margin-bottom: 1.5rem;">
+                    Publica una pichanga usando una de tus reservas confirmadas. Otros jugadores podrán unirse mientras queden cupos.
+                </p>
+
+                <form th:action="@{/pichangas/crear}" method="post">
+                    <div class="campo" style="margin-bottom: 1rem;">
+                        <label class="campo__etiqueta">Reserva confirmada</label>
+                        <select name="reservaId" class="control" required>
+                            <option value="">Selecciona una reserva</option>
+                            <th:block th:each="r : ${reservas}">
+                                <option th:value="${r.id}"
+                                        th:text="|${r.codigo} - ${r.cancha.nombre} - ${r.fecha} ${r.horaInicio}|">
+                                </option>
+                            </th:block>
+                        </select>
+                        <p class="campo__ayuda" style="margin: .25rem 0 0;">
+                            Solo reservas confirmadas y futuras pueden respaldar una pichanga.
+                        </p>
+                    </div>
+
+                    <div class="fila fila--entre fila--ajustar" style="gap: 1rem; margin-bottom: 1rem;">
+                        <div class="campo" style="flex: 1;">
+                            <label class="campo__etiqueta">Cupos totales</label>
+                            <input type="number" name="cuposTotal" class="control" required
+                                   th:value="${pichangaForm.cuposTotal != null ? pichangaForm.cuposTotal : 10}"
+                                   min="2" max="30"/>
+                        </div>
+                        <div class="campo" style="flex: 1;">
+                            <label class="campo__etiqueta">Nivel de juego</label>
+                            <select name="nivel" class="control" required>
+                                <option th:each="n : ${niveles}"
+                                        th:value="${n}"
+                                        th:text="${n.etiqueta}"
+                                        th:selected="${pichangaForm.nivel == n}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="campo" style="margin-bottom: 1rem;">
+                        <label class="campo__etiqueta">Cuota por participante (S/)</label>
+                        <input type="number" name="precioParticipante" class="control" required
+                               th:value="${pichangaForm.precioParticipante != null ? pichangaForm.precioParticipante : 0}"
+                               min="0" step="0.01"/>
+                        <p class="campo__ayuda" style="margin: .25rem 0 0;">
+                            0 si es una pichanga gratuita entre amigos.
+                        </p>
+                    </div>
+
+                    <div class="campo" style="margin-bottom: 1rem;">
+                        <label class="campo__etiqueta">Descripción</label>
+                        <textarea name="descripcion" class="control"
+                                  th:text="${pichangaForm.descripcion != null ? pichangaForm.descripcion : ''}"
+                                  placeholder="Ej: Partido amistoso, traigan agua y camisetas..."></textarea>
+                    </div>
+
+                    <button type="submit" class="boton boton--primario boton--grande" style="width: 100%;">
+                        Publicar pichanga
+                    </button>
+                </form>
+            </div>
+
+            <div class="alerta alerta--info" role="status" style="margin-top: 1.5rem;">
+                <i class="bi bi-info-circle" aria-hidden="true"></i>
+                <span>
+                    Necesitas tener una reserva <strong>confirmada y futura</strong> para crear una pichanga.
+                    Ve a <a th:href="@{/reservas/mis-reservas}">Mis reservas</a> si no ves ninguna disponible.
+                </span>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

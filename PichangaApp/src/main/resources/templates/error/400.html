@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title th:text="${titulo}">Solicitud inválida · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="tarjeta tarjeta--navy" style="text-align: center; padding: 3rem 2rem;">
+                <h1 style="color: var(--pa-texto-inverso); margin-bottom: 1rem;">Solicitud inválida</h1>
+                <p class="texto-suave" style="color: #94a3b8; margin-bottom: 2rem;" th:text="${mensaje}">La solicitud no se pudo procesar.</p>
+                <a class="boton boton--primario" th:href="@{/}">Volver al inicio</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
