@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title th:text="|${pichanga.cancha.nombre} · PichangaApp|">Pichanga · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre" style="margin-bottom: 1.5rem;">
+                <a class="boton boton--fantasma boton--pequeno" th:href="@{/pichangas}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a pichangas
+                </a>
+                <span class="texto-pequeno texto-tenue" th:text="|${pichanga.fecha} ${pichanga.horaInicio} – ${pichanga.horaFin}|"></span>
+            </div>
+
+            <div class="tarjeta">
+                <div class="fila fila--entre" style="margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <h2 style="margin: 0;" th:text="${pichanga.cancha.nombre}">Cancha</h2>
+                        <p class="texto-suave" style="margin: 0;" th:text="|${pichanga.cancha.ubicacion} · ${pichanga.cancha.superficie.etiqueta} · ${pichanga.cancha.capacidad} jugadores|"></p>
+                    </div>
+                    <span class="badge" th:classappend="${pichanga.estado.color}"
+                          th:text="${pichanga.estado.etiqueta}">Abierta</span>
+                </div>
+
+                <div class="fila fila--entre" style="margin-top: 1rem; gap: 1rem;">
+                    <span class="badge-cupos">
+                        <i class="bi bi-people" aria-hidden="true"></i>
+                        <span th:text="|${pichanga.cuposDisponibles} de ${pichanga.cuposTotal} cupos|">7 de 10 cupos</span>
+                    </span>
+                    <span th:replace="~{layout/base :: precio(${pichanga.precioParticipante})}">S/ 10</span>
+                    <span class="texto-pequeno texto-tenue" th:text="${pichanga.nivel.etiqueta}">Intermedio</span>
+                </div>
+
+                <p class="texto-suave" th:if="${pichanga.descripcion != null}"
+                   th:text="${pichanga.descripcion}">Descripción de la pichanga.</p>
+
+                <!-- Participantes -->
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: .75rem;" th:text="|Participantes (${#lists.size(participantes)})|">Participantes</h3>
+                    <div class="rejilla rejilla--6" style="gap: .5rem;">
+                        <th:block th:each="u : ${participantes}">
+                            <div class="tarjeta" style="padding: .5rem; text-align: center; flex: 0 0 auto;">
+                                <div class="avatar avatar--grande" style="margin: 0 auto .25rem;"
+                                     th:text="${u.iniciales}">JP</div>
+                                <div class="texto-pequeno" th:text="${u.primerNombre}">Juan</div>
+                                <div class="texto-tenue texto-pequeno"
+                                     th:if="${u.id == pichanga.organizador.id}" style="font-size: .7rem;">
+                                    Organizador
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- Acciones según rol -->
+                <div style="margin-top: 1.5rem; display: flex; gap: .75rem; flex-wrap: wrap;">
+                    <th:block th:if="${esOrganizador and !yaComenzo and pichanga.estado.name() != 'CANCELADA'}">
+                        <form th:action="@{/pichangas/{id}/cancelar(id=${pichanga.id})}" method="post"
+                              data-confirmar="¿Cancelar esta pichanga? Se avisará a todos los participantes.">
+                            <button type="submit" class="boton boton--peligro">
+                                <i class="bi bi-calendar-x" aria-hidden="true"></i> Cancelar pichanga
+                            </button>
+                        </form>
+                    </th:block>
+                    <th:block th:if="${!esParticipante and !esOrganizador and pichanga.estado.name() == 'ABIERTA' and pichanga.cuposDisponibles > 0 and !yaComenzo}">
+                        <form th:action="@{/pichangas/{id}/unirse(id=${pichanga.id})}" method="post">
+                            <button type="submit" class="boton boton--primario boton--grande">
+                                <i class="bi bi-person-plus" aria-hidden="true"></i> Unirse a la pichanga
+                            </button>
+                        </form>
+                    </th:block>
+                    <th:block th:if="${esParticipante and !esOrganizador and pichanga.estado.name() != 'CANCELADA'}">
+                        <form th:action="@{/pichangas/{id}/salir(id=${pichanga.id})}" method="post"
+                              data-confirmar="¿Salir de esta pichanga? Se liberará tu cupo.">
+                            <button type="submit" class="boton boton--fantasma">
+                                <i class="bi bi-person-dash" aria-hidden="true"></i> Salir de la pichanga
+                            </button>
+                        </form>
+                    </th:block>
+                </div>
+
+                <p class="texto-suave" style="margin: 1rem 0 0;"
+                   th:if="${pichanga.estado.name() == 'CANCELADA'}">
+                    <i class="bi bi-calendar-x" aria-hidden="true"></i>
+                    El organizador canceló esta pichanga.
+                    <a th:href="@{/pichangas}">Busca otra para jugar</a>.
+                </p>
+                <p class="texto-suave" style="margin: 1rem 0 0;"
+                   th:if="${pichanga.estado.name() == 'LLENA' and !esParticipante}">
+                    <i class="bi bi-people" aria-hidden="true"></i>
+                    Ya se completaron los cupos de esta pichanga.
+                    <a th:href="@{/pichangas}">Mira otras pichangas disponibles</a>.
+                </p>
+                <p class="texto-suave" style="margin: 1rem 0 0;"
+                   th:if="${pichanga.estado.name() == 'ABIERTA' and !esParticipante and yaComenzo}">
+                    <i class="bi bi-clock-history" aria-hidden="true"></i>
+                    Esta pichanga ya empezó.
+                    <a th:href="@{/pichangas}">Busca una para otra fecha</a>.
+                </p>
+                <p class="texto-suave" style="margin: 1rem 0 0;"
+                   th:if="${esOrganizador and yaComenzo and pichanga.estado.name() != 'CANCELADA'}">
+                    <i class="bi bi-info-circle" aria-hidden="true"></i>
+                    El partido ya empezó, así que esta pichanga ya no se puede cancelar.
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

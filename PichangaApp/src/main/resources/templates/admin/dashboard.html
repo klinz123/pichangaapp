@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Administración · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion seccion--compacta">
+        <div class="contenedor">
+            <header class="panel-cabecera">
+                <div>
+                    <span class="eyebrow">Administración del sistema</span>
+                    <h1 class="panel-cabecera__titulo">Panel de administración</h1>
+                    <p class="texto-suave" style="margin: .4rem 0 0;">
+                        Vista global de la plataforma ·
+                        <span th:text="${#temporals.format(hoy, 'dd/MM/yyyy')}">26/10/2026</span>
+                    </p>
+                </div>
+                <div class="fila" style="gap: .5rem; flex-wrap: wrap;">
+                    <a class="boton boton--primario" th:href="@{/admin/usuarios}">Gestionar usuarios</a>
+                    <a class="boton boton--contorno" th:href="@{/admin/canchas}">Gestionar canchas</a>
+                </div>
+            </header>
+
+            <!-- KPIs globales -->
+            <div class="rejilla rejilla--3 panel-kpis">
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono"><i class="bi bi-people" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Usuarios totales</p>
+                        <p class="kpi__valor" th:text="${usuariosTotal}">0</p>
+                        <p class="kpi__nota"
+                           th:text="|${jugadores} jugadores · ${admins} administradores|">0 jugadores · 0 administradores</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--cielo"><i class="bi bi-shop" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Propietarios</p>
+                        <p class="kpi__valor" th:text="${propietarios}">0</p>
+                        <p class="kpi__nota">Cuentas con canchas</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--verde"><i class="bi bi-grid-3x3-gap" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Canchas activas</p>
+                        <p class="kpi__valor" th:text="${canchasActivas}">0</p>
+                        <p class="kpi__nota" th:text="|de ${canchasTotal} registradas|">de 0 registradas</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--ambar"><i class="bi bi-calendar-check" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Reservas hoy</p>
+                        <p class="kpi__valor" th:text="${reservasHoy}">0</p>
+                        <p class="kpi__nota" th:text="|${reservasMes} este mes|">0 este mes</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono"><i class="bi bi-cash-stack" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Ingresos del mes</p>
+                        <p class="kpi__valor"
+                           th:text="|S/ ${#strings.replace(#numbers.formatDecimal(ingresosMes, 1, 2, 'POINT'), '.00', '')}|">S/ 0</p>
+                        <p class="kpi__nota">Pagos netos cobrados</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--cielo"><i class="bi bi-patch-check" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Solicitudes pendientes</p>
+                        <p class="kpi__valor" th:text="${solicitudesPendientes}">0</p>
+                        <a class="enlace-flecha" th:href="@{/admin/usuarios}"
+                           th:text="${solicitudesPendientes > 0} ? 'Revisar verificaciones' : 'Todo al día'">Todo al día</a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Gráfico + top canchas -->
+            <div class="rejilla panel-doble">
+                <article class="tarjeta">
+                    <div class="fila fila--entre" style="align-items: flex-start; gap: 1rem;">
+                        <div>
+                            <h3 style="margin: 0;">Reservas de los últimos 7 días</h3>
+                            <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                                Toda la plataforma · confirmadas y completadas
+                            </p>
+                        </div>
+                        <span class="badge badge--exito" th:text="|${reservasSemana} en total|">0 en total</span>
+                    </div>
+                    <div class="grafico" role="img"
+                         th:attr="aria-label=|Reservas de los últimos 7 días: ${reservasSemana} en total|">
+                        <div class="grafico__columna" th:each="p : ${serie}"
+                             th:classappend="${p.actual} ? 'grafico__columna--hoy'">
+                            <span class="grafico__valor" th:text="${p.valor}">0</span>
+                            <div class="grafico__pista">
+                                <div class="grafico__barra" th:style="|height: ${p.altura}%|"></div>
+                            </div>
+                            <span class="grafico__dia" th:text="${p.etiqueta}">lun</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="tarjeta">
+                    <h3 style="margin: 0;">Top canchas del mes</h3>
+                    <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                        Por reservas confirmadas y completadas
+                    </p>
+
+                    <div class="ranking" th:if="${!#lists.isEmpty(topCanchas)}">
+                        <div class="ranking__fila" th:each="f : ${topCanchas}">
+                            <div class="ranking__cabecera">
+                                <span class="ranking__nombre" th:text="${f.titulo}">Cancha</span>
+                                <span class="ranking__valor" th:text="|${f.reservas} reservas|">0 reservas</span>
+                            </div>
+                            <div class="ranking__pista" aria-hidden="true">
+                                <div class="ranking__barra" th:style="|width: ${f.porcentaje}%|"></div>
+                            </div>
+                            <span class="ranking__detalle"
+                                  th:text="|${f.subtitulo} · S/ ${#strings.replace(#numbers.formatDecimal(f.ingresos, 1, 2, 'POINT'), '.00', '')}|">Propietario · S/ 0</span>
+                        </div>
+                    </div>
+
+                    <div class="sin-datos" th:if="${#lists.isEmpty(topCanchas)}">
+                        <p>Sin reservas registradas este mes.</p>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Últimos usuarios -->
+            <article class="tarjeta" style="margin-top: 1.5rem;">
+                <div class="fila fila--entre" style="align-items: flex-start; gap: 1rem;">
+                    <div>
+                        <h3 style="margin: 0;">Últimos usuarios registrados</h3>
+                        <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                            Las 5 cuentas más recientes · <span th:text="${reservasTotal}">0</span> reservas históricas
+                        </p>
+                    </div>
+                    <a class="boton boton--fantasma boton--pequeno" th:href="@{/admin/usuarios}">Ver todos</a>
+                </div>
+
+                <div class="tabla-responsive" style="margin-top: 1rem;">
+                    <table class="tabla tabla-mini">
+                        <thead>
+                        <tr>
+                            <th style="text-align: left;">Usuario</th>
+                            <th style="text-align: left;">Rol</th>
+                            <th style="text-align: left;">Registro</th>
+                            <th style="text-align: left;">Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="u : ${ultimosUsuarios}">
+                            <td>
+                                <div class="usuario-celda">
+                                    <span class="avatar-mini" th:text="${u.iniciales}">CM</span>
+                                    <span>
+                                        <strong th:text="${u.nombre}">Nombre</strong>
+                                        <span class="texto-tenue texto-pequeno" th:text="${u.email}">correo</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${u.rol.name() == 'ADMIN' ? 'warning' : (u.rol.name() == 'PROPIETARIO' ? 'info' : 'secondary')}"
+                                      th:text="${u.rol.etiqueta}">Jugador</span>
+                            </td>
+                            <td th:text="${u.fechaRegistro == null ? '—' : #temporals.format(u.fechaRegistro, 'dd/MM/yyyy')}">—</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${u.activo ? 'success' : 'secondary'}"
+                                      th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

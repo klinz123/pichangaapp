@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Acceso denegado · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="error-pagina">
+        <div class="contenedor">
+            <div class="error-codigo" th:text="${codigo} ?: '403'">403</div>
+            <span class="eyebrow">Acceso restringido</span>
+            <h1>No tienes permiso para entrar aquí</h1>
+            <p>
+                Tu cuenta no cuenta con el rol necesario para esta sección.
+                Si crees que se trata de un error, escríbenos a
+                <a href="mailto:soporte@pichangaapp.pe">soporte@pichangaapp.pe</a>.
+            </p>
+            <p class="texto-pequeno texto-tenue" th:if="${ruta != null}">
+                Ruta solicitada: <code th:text="${ruta}">/panel</code>
+            </p>
+
+            <div class="fila">
+                <a class="boton boton--primario" th:href="@{/}">
+                    <i class="bi bi-house" aria-hidden="true"></i> Volver al inicio
+                </a>
+                <a class="boton boton--contorno" th:href="@{/login}">
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Iniciar sesión con otra cuenta
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

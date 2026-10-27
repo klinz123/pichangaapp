@@ -1,0 +1,20 @@
+# Normaliza finales de linea: evita que mvnw (script sh) se rompa en Linux/macOS.
+* text=auto eol=lf
+
+# Scripts de Windows conservan CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binarios: no tocar ni intentar diff.
+*.jar binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.docx binary
+*.pptx binary
+*.xlsx binary
+*.pdf binary

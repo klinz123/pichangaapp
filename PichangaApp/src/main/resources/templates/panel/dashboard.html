@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Panel del propietario · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion seccion--compacta">
+        <div class="contenedor">
+            <header class="panel-cabecera">
+                <div>
+                    <span class="eyebrow">Panel del propietario</span>
+                    <h1 class="panel-cabecera__titulo">Resumen de tu negocio</h1>
+                    <p class="texto-suave" style="margin: .4rem 0 0;">
+                        <span th:text="${#temporals.format(hoy, 'dd/MM/yyyy')}">26/10/2026</span>
+                        · <strong th:text="${reservasHoy}">0</strong> reservas para hoy
+                    </p>
+                </div>
+                <div class="fila" style="gap: .5rem; flex-wrap: wrap;">
+                    <a class="boton boton--primario" th:href="@{/panel/canchas/nueva}">
+                        <i class="bi bi-plus-lg" aria-hidden="true"></i> Nueva cancha
+                    </a>
+                    <a class="boton boton--contorno" th:href="@{/panel/reservas}">
+                        <i class="bi bi-calendar3" aria-hidden="true"></i> Reservas
+                    </a>
+                </div>
+            </header>
+
+            <!-- KPIs -->
+            <div class="rejilla rejilla--4 panel-kpis">
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono"><i class="bi bi-cash-stack" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Ingresos del mes</p>
+                        <p class="kpi__valor"
+                           th:text="|S/ ${#strings.replace(#numbers.formatDecimal(ingresosMes, 1, 2, 'POINT'), '.00', '')}|">S/ 0</p>
+                        <p class="kpi__nota">Pagos netos confirmados</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--cielo"><i class="bi bi-calendar-check" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Reservas del mes</p>
+                        <p class="kpi__valor" th:text="${reservasMes}">0</p>
+                        <p class="kpi__nota">Confirmadas y completadas</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--ambar"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Reservas hoy</p>
+                        <p class="kpi__valor" th:text="${reservasHoy}">0</p>
+                        <p class="kpi__nota">Agenda del día</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta kpi">
+                    <span class="kpi__icono kpi__icono--verde"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
+                    <div class="kpi__cuerpo">
+                        <p class="kpi__etiqueta">Ocupación hoy</p>
+                        <p class="kpi__valor" th:text="|${ocupacionHoy}%|">0%</p>
+                        <div class="kpi__barra" aria-hidden="true">
+                            <span th:style="|width: ${ocupacionHoy}%|"></span>
+                        </div>
+                        <p class="kpi__nota" th:text="|${reservasHoy} de ${franjasHoy} franjas · ${canchasActivas} canchas|">0 de 0 franjas</p>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Gráfico + agenda -->
+            <div class="rejilla panel-doble">
+                <article class="tarjeta">
+                    <div class="fila fila--entre" style="align-items: flex-start; gap: 1rem;">
+                        <div>
+                            <h3 style="margin: 0;">Reservas de los últimos 7 días</h3>
+                            <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                                Confirmadas y completadas
+                            </p>
+                        </div>
+                        <span class="badge badge--exito" th:text="|${reservasSemana} en total|">0 en total</span>
+                    </div>
+                    <div class="grafico" role="img"
+                         th:attr="aria-label=|Reservas de los últimos 7 días: ${reservasSemana} en total|">
+                        <div class="grafico__columna" th:each="p : ${serie}"
+                             th:classappend="${p.actual} ? 'grafico__columna--hoy'">
+                            <span class="grafico__valor" th:text="${p.valor}">0</span>
+                            <div class="grafico__pista">
+                                <div class="grafico__barra" th:style="|height: ${p.altura}%|"></div>
+                            </div>
+                            <span class="grafico__dia" th:text="${p.etiqueta}">lun</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="tarjeta">
+                    <div class="fila fila--entre" style="align-items: flex-start; gap: 1rem;">
+                        <div>
+                            <h3 style="margin: 0;">Próximas reservas</h3>
+                            <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                                Siguientes 14 días
+                            </p>
+                        </div>
+                        <a class="boton boton--fantasma boton--pequeno" th:href="@{/panel/reservas}">Ver todas</a>
+                    </div>
+
+                    <ul class="agenda" th:if="${!#lists.isEmpty(proximas)}">
+                        <li class="agenda__item" th:each="r : ${proximas}">
+                            <div class="agenda__fecha">
+                                <span class="agenda__dia" th:text="${#temporals.format(r.fecha, 'dd')}">27</span>
+                                <span class="agenda__mes" th:text="${#temporals.format(r.fecha, 'MM')}">10</span>
+                            </div>
+                            <div class="agenda__datos">
+                                <strong th:text="${r.cancha.nombre}">Cancha</strong>
+                                <span class="texto-tenue texto-pequeno"
+                                      th:text="|${r.horaInicio} – ${r.horaFin} · ${r.usuario.nombre}|">07:00 – 08:00 · Jugador</span>
+                            </div>
+                            <span class="badge" th:classappend="${r.estado.color}"
+                                  th:text="${r.estado.etiqueta}">Confirmada</span>
+                        </li>
+                    </ul>
+
+                    <div class="sin-datos" th:if="${#lists.isEmpty(proximas)}">
+                        <i class="bi bi-calendar-x sin-datos__icono" aria-hidden="true"></i>
+                        <p>No tienes reservas próximas.</p>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Ranking + accesos -->
+            <div class="rejilla panel-doble">
+                <article class="tarjeta">
+                    <h3 style="margin: 0;">Rendimiento por cancha</h3>
+                    <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                        Reservas e ingresos del mes
+                    </p>
+
+                    <div class="ranking" th:if="${!#lists.isEmpty(ranking)}">
+                        <div class="ranking__fila" th:each="f : ${ranking}">
+                            <div class="ranking__cabecera">
+                                <span class="ranking__nombre" th:text="${f.titulo}">Cancha</span>
+                                <span class="ranking__valor" th:text="|${f.reservas} reservas|">0 reservas</span>
+                            </div>
+                            <div class="ranking__pista" aria-hidden="true">
+                                <div class="ranking__barra" th:style="|width: ${f.porcentaje}%|"></div>
+                            </div>
+                            <span class="ranking__detalle"
+                                  th:text="|S/ ${#strings.replace(#numbers.formatDecimal(f.ingresos, 1, 2, 'POINT'), '.00', '')} · ${f.subtitulo}|">S/ 0 · Ubicación</span>
+                        </div>
+                    </div>
+
+                    <div class="sin-datos" th:if="${#lists.isEmpty(ranking)}">
+                        <p>Aún no hay reservas este mes.</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta">
+                    <h3 style="margin: 0;">Accesos rápidos</h3>
+                    <p class="texto-tenue texto-pequeno" style="margin: .25rem 0 0;">
+                        Lo que más usas en el día a día
+                    </p>
+                    <div class="accesos">
+                        <a class="acceso" th:href="@{/panel/reservas}">
+                            <i class="bi bi-calendar3" aria-hidden="true"></i>
+                            <span>Reservas</span>
+                        </a>
+                        <a class="acceso" th:href="@{/panel/canchas}">
+                            <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i>
+                            <span>Mis canchas</span>
+                        </a>
+                        <a class="acceso" th:href="@{/panel/canchas/nueva}">
+                            <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                            <span>Nueva cancha</span>
+                        </a>
+                        <a class="acceso" th:href="@{/perfil}">
+                            <i class="bi bi-person" aria-hidden="true"></i>
+                            <span>Mi perfil</span>
+                        </a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Canchas -->
+            <div class="fila fila--entre" style="margin: 2.5rem 0 1rem;">
+                <h3 style="margin: 0;">Tus canchas</h3>
+                <a class="enlace-flecha" th:href="@{/panel/canchas}">
+                    Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            <div class="rejilla rejilla--3" th:if="${!#lists.isEmpty(canchas)}">
+                <th:block th:each="c : ${canchas}">
+                    <article class="cancha-card" style="grid-template-columns: 1fr;">
+                        <div class="cancha-card__cuerpo">
+                            <h3 class="cancha-card__nombre" th:text="${c.nombre}">Cancha</h3>
+                            <p class="cancha-card__direccion" th:text="${c.ubicacion}">Dirección</p>
+                            <div class="cancha-card__meta">
+                                <span th:text="${c.superficie.etiqueta}">Cesped</span>
+                                <span>&middot;</span>
+                                <span th:text="${c.capacidad} + ' jugadores'">10 jugadores</span>
+                                <span>&middot;</span>
+                                <span th:replace="~{layout/base :: precio(${c.precioHora})}">S/ 80</span>
+                                <span>&middot;</span>
+                                <span th:text="|${c.horaApertura} - ${c.horaCierre}|">08:00 - 22:00</span>
+                            </div>
+                            <div class="cancha-card__pie" style="justify-content: flex-start; gap: .5rem;">
+                                <span class="badge"
+                                      th:classappend="${c.activa} ? 'badge--exito' : 'badge--secondary'"
+                                      th:text="${c.activa} ? 'Activa' : 'Inactiva'">Activa</span>
+                                <a class="boton boton--primario boton--pequeno"
+                                   th:href="@{/panel/canchas/{id}/horarios(id=${c.id})}">
+                                    Horarios
+                                </a>
+                                <form th:action="@{/panel/canchas/{id}/estado(id=${c.id})}" method="post"
+                                      style="display: inline;"
+                                      data-confirmar="¿Cambiar el estado de esta cancha?">
+                                    <input type="hidden" name="activa" th:value="${!c.activa}"/>
+                                    <button type="submit" class="boton boton--fantasma boton--pequeno"
+                                            th:text="${c.activa} ? 'Desactivar' : 'Activar'"></button>
+                                </form>
+                                <a class="boton boton--fantasma boton--pequeno"
+                                   th:href="@{/panel/canchas/{id}/editar(id=${c.id})}">
+                                    Editar
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </th:block>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(canchas)}">
+                <i class="bi bi-building sin-datos__icono" aria-hidden="true"></i>
+                <p style="margin: 0;">Todavía no tienes canchas registradas. Crea tu primera cancha.</p>
+                <a class="boton boton--primario" th:href="@{/panel/canchas/nueva}"
+                   style="margin-top: 1rem; display: inline-block;">Registrar cancha</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

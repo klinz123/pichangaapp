@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Reservar cancha · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre" style="margin-bottom: 1.5rem;">
+                <a class="boton boton--fantasma boton--pequeno" th:href="@{/canchas/{id}(id=${cancha.id})}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver a <span th:text="${cancha.nombre}">cancha</span>
+                </a>
+            </div>
+
+            <div class="tarjeta">
+                <h3 style="margin-top: 0;">Confirmar reserva</h3>
+                <p class="texto-suave">
+                    Vas a reservar <strong th:text="${cancha.nombre}">Cancha</strong>
+                    el <span th:text="${fecha}">fecha</span> a las
+                    <span th:text="${hora}">hora</span>.
+                </p>
+
+                <div class="fila fila--entre" style="margin-top: 1.5rem;">
+                    <span>Precio total:</span>
+                    <span style="font-size: 1.5rem; font-weight: bold;">
+                        <span th:replace="~{layout/base :: precio(${precioTotal})}">S/ 80</span>
+                    </span>
+                </div>
+
+                <form th:action="@{/reservas}" method="post">
+                    <input type="hidden" name="canchaId" th:value="${cancha.id}"/>
+                    <input type="hidden" name="fecha" th:value="${fecha}"/>
+                    <input type="hidden" name="horaInicio" th:value="${hora}"/>
+                    <button type="submit" class="boton boton--primario boton--grande" style="margin-top: 1rem; width: 100%;">
+                        Crear reserva y pasar al pago
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

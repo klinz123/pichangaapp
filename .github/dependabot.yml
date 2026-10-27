@@ -1,0 +1,31 @@
+version: 2
+
+updates:
+  - package-ecosystem: maven
+    directory: /PichangaApp
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+        update-types:
+          - minor
+          - patch
+      resto:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"

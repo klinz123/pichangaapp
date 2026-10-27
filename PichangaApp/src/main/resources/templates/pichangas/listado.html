@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Pichangas abiertas · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Pichangas abiertas</span>
+                    <h2>Únete a un partido</h2>
+                    <p class="texto-suave" style="margin: 0;">
+                        Encuentra pichangas publicadas por otros jugadores y completa el equipo.
+                    </p>
+                </div>
+                <a class="boton boton--primario" th:href="@{/}">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Volver al inicio
+                </a>
+            </div>
+
+            <!-- Filtros -->
+            <form class="filtros tarjeta" th:action="@{/pichangas}" method="get">
+                <div class="fila fila--entre fila--ajustar" style="gap: 1rem;">
+                    <div class="campo">
+                        <label class="campo__etiqueta">Distrito</label>
+                        <select name="distrito" class="control">
+                            <option value="">Todos</option>
+                            <option th:each="d : ${distritos}"
+                                    th:value="${d}"
+                                    th:text="${d}"
+                                    th:selected="${filtroDistrito == d}"></option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label class="campo__etiqueta">Fecha</label>
+                        <input type="date" name="fecha" class="control"
+                               th:value="${#temporals.format(filtroFecha, 'yyyy-MM-dd')}"/>
+                    </div>
+                    <div class="campo">
+                        <label class="campo__etiqueta">Nivel</label>
+                        <select name="nivel" class="control">
+                            <option value="">Todos los niveles</option>
+                            <option th:each="n : ${niveles}"
+                                    th:value="${n}"
+                                    th:text="${n.etiqueta}"
+                                    th:selected="${filtroNivel == n}"></option>
+                        </select>
+                    </div>
+                    <div class="campo" style="flex: 1;">
+                        <label class="campo__etiqueta">Buscar</label>
+                        <input type="text" name="texto" class="control"
+                               th:value="${filtroTexto}"
+                               placeholder="Nombre de la cancha o descripción"/>
+                    </div>
+                    <button type="submit" class="boton boton--primario">Filtrar</button>
+                    <a class="boton boton--fantasma" th:href="@{/pichangas}">Limpiar</a>
+                </div>
+            </form>
+
+            <div class="fila fila--entre" style="margin-top: 1.5rem;">
+                <span class="texto-pequeno texto-tenue"
+                      th:text="|${#lists.size(pichangas)} pichanga${#lists.size(pichangas) != 1 ? 's' : ''} abierta${#lists.size(pichangas) != 1 ? 's' : ''}|"></span>
+            </div>
+
+            <div class="rejilla rejilla--3" th:if="${!#lists.isEmpty(pichangas)}">
+                <th:block th:each="p : ${pichangas}">
+                    <article class="tarjeta" style="display: flex; flex-direction: column;">
+                        <div style="flex: 1;">
+                            <div class="fila fila--entre" style="margin-bottom: .5rem;">
+                                <span class="badge"
+                                      th:classappend="${p.nivel.name() == 'PRINCIPIANTE'} ? 'badge--info' : 'badge--secondary'"
+                                      th:text="${p.nivel.etiqueta}">Principiante</span>
+                                <span class="texto-pequeno texto-tenue" th:text="${p.fecha}">2026-10-24</span>
+                            </div>
+                            <h3 style="font-size: 1.25rem; margin: 0 0 .25rem;" th:text="${p.cancha.nombre}">Cancha</h3>
+                            <p class="texto-pequeno texto-suave" th:text="|${p.horaInicio} – ${p.horaFin} · ${p.cancha.distrito} · ${p.cancha.superficie.etiqueta}|">20:00 – 21:00 · San Borja</p>
+                            <p class="texto-pequeno texto-suave" th:if="${p.descripcion != null}"
+                               th:text="${#strings.abbreviate(p.descripcion, 100)}">Descripción...</p>
+                            <div class="fila fila--entre" style="margin-top: 1rem; gap: 1rem;">
+                                <span class="badge-cupos">
+                                    <i class="bi bi-people" aria-hidden="true"></i>
+                                    <span th:text="|${p.cuposDisponibles} de ${p.cuposTotal} cupos|">7 de 10 cupos</span>
+                                </span>
+                                <span th:replace="~{layout/base :: precio(${p.precioParticipante})}">S/ 10</span>
+                            </div>
+                            <div class="barra-cupos" style="margin-top: .6rem;" role="presentation">
+                                <div class="barra-cupos__relleno"
+                                     th:style="|width:${p.porcentajeOcupado}%|"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <a class="boton boton--primario boton--pequeno" th:href="@{/pichangas/{id}(id=${p.id})}">
+                                Ver detalle
+                            </a>
+                        </div>
+                    </article>
+                </th:block>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(pichangas)}">
+                <i class="bi bi-people sin-datos__icono" aria-hidden="true"></i>
+                <p style="margin: 0;">No hay pichangas abiertas con esos filtros.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

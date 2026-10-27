@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Crear cuenta · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="auth" style="padding-top: 1rem;">
+        <div class="contenedor-angosto">
+
+            <div class="encabezado-seccion">
+                <span class="eyebrow">Únete a PichangaApp</span>
+                <h1 style="font-size: 2.2rem;">Crea tu cuenta</h1>
+                <p class="texto-suave" style="margin: 0;">
+                    Reserva canchas, organiza pichangas o publica tus horarios.
+                    Toma menos de un minuto.
+                </p>
+            </div>
+
+            <div class="tarjeta form-centrado" style="padding: 2rem; box-shadow: var(--pa-sombra-2); max-width: 520px; margin: 0 auto;">
+                <form th:action="@{/registro}" th:object="${registroForm}" method="post">
+
+                    <!-- Errores globales (rechazos de reglas de negocio) -->
+                    <div class="alerta alerta--error" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                        <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
+                        <div>
+                            <strong>No pudimos crear tu cuenta.</strong>
+                            <ul style="margin: .35rem 0 0 1.1rem;">
+                                <li th:each="error : ${#fields.globalErrors()}" th:text="${error}">
+                                    Revisa los datos ingresados.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label class="campo__etiqueta" for="nombre">Nombre completo</label>
+                        <input class="control" type="text" th:field="*{nombre}"
+                               autocomplete="name" required placeholder="Ej. Carlos Mendoza"
+                               th:classappend="${#fields.hasErrors('nombre')} ? ' es-invalido' : ''">
+                        <span class="mensaje-error" th:if="${#fields.hasErrors('nombre')}"
+                              th:errors="*{nombre}">Ingresa tu nombre completo</span>
+                    </div>
+
+                    <div class="campo">
+                        <label class="campo__etiqueta" for="email">Correo electrónico</label>
+                        <input class="control" type="email" th:field="*{email}"
+                               autocomplete="email" required placeholder="tucorreo@ejemplo.com"
+                               th:classappend="${#fields.hasErrors('email')} ? ' es-invalido' : ''">
+                        <span class="campo__ayuda">Será tu usuario para iniciar sesión.</span>
+                        <span class="mensaje-error" th:if="${#fields.hasErrors('email')}"
+                              th:errors="*{email}">Ingresa un correo válido</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 1rem;">
+                        <div class="campo">
+                            <label class="campo__etiqueta" for="password">Contraseña</label>
+                            <input class="control" type="password" th:field="*{password}"
+                                   autocomplete="new-password" required placeholder="Mínimo 8 caracteres"
+                                   th:classappend="${#fields.hasErrors('password')} ? ' es-invalido' : ''">
+                            <span class="campo__ayuda">Al menos 8 caracteres, combinando letras y números.</span>
+                            <span class="mensaje-error" th:if="${#fields.hasErrors('password')}"
+                                  th:errors="*{password}">Ingresa una contraseña válida</span>
+                        </div>
+
+                        <div class="campo">
+                            <label class="campo__etiqueta" for="confirmarPassword">Confirmar contraseña</label>
+                            <input class="control" type="password"
+                                   th:field="*{confirmarPassword}" autocomplete="new-password" required
+                                   placeholder="Repite tu contraseña"
+                                   th:classappend="${#fields.hasErrors('confirmarPassword')} ? ' es-invalido' : ''">
+                            <span class="campo__ayuda">Debe coincidir con la contraseña anterior.</span>
+                            <span class="mensaje-error" th:if="${#fields.hasErrors('confirmarPassword')}"
+                                  th:errors="*{confirmarPassword}">Confirma tu contraseña</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 1rem;">
+                        <div class="campo">
+                            <label class="campo__etiqueta" for="telefono">Teléfono</label>
+                            <input class="control" type="tel" th:field="*{telefono}"
+                                   autocomplete="tel" placeholder="912345678"
+                                   th:classappend="${#fields.hasErrors('telefono')} ? ' es-invalido' : ''">
+                            <span class="campo__ayuda">Opcional. Lo usamos para avisos de tus reservas.</span>
+                            <span class="mensaje-error" th:if="${#fields.hasErrors('telefono')}"
+                                  th:errors="*{telefono}">Ingresa un teléfono válido</span>
+                        </div>
+
+                        <div class="campo">
+                            <label class="campo__etiqueta" for="fechaNacimiento">Fecha de nacimiento</label>
+                            <input class="control" type="date"
+                                   th:field="*{fechaNacimiento}" th:max="${hoy}" required
+                                   th:classappend="${#fields.hasErrors('fechaNacimiento')} ? ' es-invalido' : ''">
+                            <span class="campo__ayuda">Debes ser mayor de edad para organizar pichangas.</span>
+                            <span class="mensaje-error" th:if="${#fields.hasErrors('fechaNacimiento')}"
+                                  th:errors="*{fechaNacimiento}">Ingresa tu fecha de nacimiento</span>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <fieldset style="border: 0; padding: 0; margin: 0;">
+                            <legend class="campo__etiqueta" style="padding: 0;">Tipo de cuenta</legend>
+
+                            <div class="opciones-rol">
+                                <label class="opcion-rol" th:each="r : ${roles}">
+                                    <input type="radio" th:field="*{rol}" th:value="${r}">
+                                    <span class="opcion-rol__titulo" th:text="${r.etiqueta}">Jugador</span>
+                                    <span class="opcion-rol__detalle"
+                                          th:text="${r.name() == 'JUGADOR'}
+                                                   ? 'Busco canchas y partidos para jugar'
+                                                   : 'Publico mis canchas y gestiono sus horarios'">
+                                        Busco canchas y partidos para jugar
+                                    </span>
+                                </label>
+                            </div>
+
+                            <span class="mensaje-error" th:if="${#fields.hasErrors('rol')}"
+                                  th:errors="*{rol}">Selecciona el tipo de cuenta</span>
+                        </fieldset>
+                    </div>
+
+                    <div class="campo">
+                        <label class="grupo-check" for="aceptaTerminos">
+                            <input type="checkbox" th:field="*{aceptaTerminos}" required>
+                            <span>
+                                Acepto los términos y condiciones y la política de privacidad
+                                de PichangaApp, incluido el tratamiento de mis datos personales.
+                            </span>
+                        </label>
+                        <span class="mensaje-error" th:if="${#fields.hasErrors('aceptaTerminos')}"
+                              th:errors="*{aceptaTerminos}">Debes aceptar los términos</span>
+                    </div>
+
+                    <button class="boton boton--primario boton--bloque" type="submit">
+                        Crear mi cuenta <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
+
+            <p class="auth__enlace-secundario">
+                ¿Ya tienes una cuenta?
+                <a th:href="@{/login}">Inicia sesión</a>
+            </p>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

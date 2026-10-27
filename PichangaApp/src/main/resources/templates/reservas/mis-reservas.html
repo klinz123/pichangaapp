@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Mis reservas · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Tu actividad</span>
+                    <h2>Mis reservas</h2>
+                </div>
+                <a class="boton boton--primario" th:href="@{/canchas}">Buscar canchas</a>
+            </div>
+
+            <div class="tabla-responsive" th:if="${!#lists.isEmpty(reservas)}">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th style="text-align: left;">Codigo</th>
+                        <th style="text-align: left;">Cancha</th>
+                        <th style="text-align: left;">Fecha y hora</th>
+                        <th style="text-align: left;">Estado</th>
+                        <th style="text-align: left;">Total</th>
+                        <th style="text-align: left;">Pago</th>
+                        <th style="text-align: left;">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${reservas}">
+                        <td><code th:text="${r.codigo}">PIC-26-XXXX</code></td>
+                        <td th:text="${r.cancha.nombre}">Cancha</td>
+                        <td th:text="|${r.fecha} ${r.horaInicio}|">2026-10-24 20:00</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${r.estado.color}"
+                                  th:text="${r.estado.etiqueta}">Pendiente</span>
+                        </td>
+                        <td><span th:replace="~{layout/base :: precio(${r.precioTotal})}">S/ 80</span></td>
+                        <td>
+                            <span class="badge"
+                                  th:if="${pagoService.estaPagada(r)}"
+                                  th:classappend="badge--exito"
+                                  th:text="'Pagado'">Pagado</span>
+                            <span class="badge"
+                                  th:unless="${pagoService.estaPagada(r)}"
+                                  th:classappend="badge--advertencia"
+                                  th:text="'Pendiente'">Pendiente</span>
+                        </td>
+                        <td>
+                            <div class="fila" style="gap: .35rem; flex-wrap: wrap;">
+                                <a th:href="@{/reservas/{id}(id=${r.id})}"
+                                   class="boton boton--fantasma boton--pequeno">Ver</a>
+
+                                <a th:if="${r.estado.estaVigente() and !pagoService.estaPagada(r)}"
+                                   th:href="@{/pagos/{id}(id=${r.id})}"
+                                   class="boton boton--primario boton--pequeno">Pagar</a>
+
+                                <a th:if="${calificables.contains(r.id)}"
+                                   th:href="@{/calificaciones/{id}(id=${r.id})}"
+                                   class="boton boton--contorno boton--pequeno">Calificar</a>
+
+                                <form th:if="${r.estado.estaVigente()}"
+                                      th:action="@{/reservas/{id}/cancelar(id=${r.id})}" method="post"
+                                      data-confirmar="¿Cancelar la reserva? Se aplicará la política de reembolso."
+                                      style="display: inline;">
+                                    <button type="submit"
+                                            class="boton boton--peligro boton--pequeno">Cancelar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sin-datos" th:if="${#lists.isEmpty(reservas)}">
+                <i class="bi bi-calendar-event sin-datos__icono" aria-hidden="true"></i>
+                <p style="margin: 0;">Todavia no tienes reservas. Reserva tu primera cancha.</p>
+                <a class="boton boton--primario" th:href="@{/canchas}" style="margin-top: 1rem; display: inline-block;">Buscar canchas</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<style>
+    .tabla-responsive { overflow-x: auto; margin-top: 1rem; }
+    table.tabla { width: 100%; border-collapse: collapse; }
+    table.tabla th, table.tabla td {
+        padding: .75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--pa-borde);
+    }
+    table.tabla th { background: var(--pa-superficie-2); font-size: var(--pa-pequeno); text-transform: uppercase; letter-spacing: .05em; color: var(--pa-texto-tenue); }
+    table.tabla tr:hover { background: var(--pa-superficie-2); }
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: .25rem .6rem;
+        border-radius: var(--pa-radio-pill);
+        font-size: var(--pa-micro);
+        font-weight: 600;
+    }
+    .badge--exito { background: var(--pa-exito-suave); color: var(--pa-exito); }
+    .badge--advertencia { background: var(--pa-advertencia-suave); color: var(--pa-advertencia); }
+    .badge--info { background: var(--pa-info-suave); color: var(--pa-info); }
+    .badge--danger { background: var(--pa-peligro-suave); color: var(--pa-peligro); }
+    .badge--secondary { background: #f1f5f9; color: var(--pa-texto-tenue); }
+    .badge--dark { background: #e2e8f0; color: var(--pa-navy); }
+</style>
+
+</body>
+</html>

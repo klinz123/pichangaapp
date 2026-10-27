@@ -1,0 +1,10 @@
+# Copia este archivo como application-local.yml y completa los valores.
+# application-local.yml esta excluido de Git.
+spring:
+  datasource:
+    username: pichanga_app
+    password: "CAMBIAR"
+
+app:
+  seguridad:
+    remember-me-key: "CAMBIAR-POR-UNA-CLAVE-LARGA-Y-ALEATORIA"

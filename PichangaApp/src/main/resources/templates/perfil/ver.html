@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: pagina(~{::title}, ~{::main})}">
+<head>
+    <title>Mi perfil · PichangaApp</title>
+</head>
+<body>
+
+<main id="contenido">
+    <section class="seccion">
+        <div class="contenedor">
+            <div class="fila fila--entre encabezado-seccion">
+                <div>
+                    <span class="eyebrow">Mi perfil</span>
+                    <h2>Configuración de cuenta</h2>
+                </div>
+                <a class="boton boton--fantasma" th:href="@{/}">Volver al inicio</a>
+            </div>
+
+            <div class="fila fila--entre" style="gap: 2rem; margin-bottom: 2rem;">
+                <!-- Perfil -->
+                <div style="flex: 1;">
+                    <div class="tarjeta">
+                        <div class="fila fila--entre" style="align-items: center; margin-bottom: 1rem;">
+                            <div class="avatar avatar--grande" style="margin: 0;"
+                                 th:text="${usuario.iniciales}">JP</div>
+                            <div>
+                                <h2 style="margin: 0;" th:text="${usuario.nombre}">Nombre</h2>
+                                <p class="texto-pequeno texto-tenue" th:text="${usuario.email}">correo@ejemplo.com</p>
+                                <span class="badge"
+                                      th:classappend="${usuario.verificado} ? 'badge--exito' : 'badge--secondary'"
+                                      th:text="${usuario.verificado} ? 'Verificado' : 'No verificado'">No verificado</span>
+                                <span class="badge"
+                                      th:classappend="${usuario.rol.name() == 'PROPIETARIO'} ? 'badge--info' : 'badge--secondary'"
+                                      th:text="${usuario.rol.etiqueta}">Jugador</span>
+                            </div>
+                        </div>
+
+                        <div class="campo" style="margin-bottom: 1rem;">
+                            <label class="campo__etiqueta">Teléfono</label>
+                            <p class="texto-suave" th:text="${usuario.telefono != null ? usuario.telefono : 'No registrado'}">—</p>
+                        </div>
+                        <div class="campo" style="margin-bottom: 1rem;">
+                            <label class="campo__etiqueta">Fecha de nacimiento</label>
+                            <p class="texto-suave" th:text="${usuario.fechaNacimiento != null ? #temporals.format(usuario.fechaNacimiento, 'dd/MM/yyyy') : 'No registrada'}">—</p>
+                        </div>
+                        <div class="campo" style="margin-bottom: 1rem;">
+                            <label class="campo__etiqueta">Fecha de registro</label>
+                            <p class="texto-suave" th:text="${#temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy')}">—</p>
+                        </div>
+
+                        <form th:action="@{/perfil}" method="post">
+                            <button type="submit" class="boton boton--primario boton--pequeno">
+                                <i class="bi bi-pencil" aria-hidden="true"></i> Editar perfil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Cambio de contraseña -->
+                <div style="flex: 1;">
+                    <div class="tarjeta">
+                        <h3 style="margin-top: 0;">Cambiar contraseña</h3>
+                        <form th:action="@{/perfil/cambiar-password}" method="post">
+                            <div class="campo" style="margin-bottom: 1rem;">
+                                <label class="campo__etiqueta">Contraseña actual</label>
+                                <input type="password" name="passwordActual" class="control" required/>
+                            </div>
+                            <div class="campo" style="margin-bottom: 1rem;">
+                                <label class="campo__etiqueta">Nueva contraseña</label>
+                                <input type="password" name="passwordNueva" class="control" required/>
+                            </div>
+                            <div class="campo" style="margin-bottom: 1rem;">
+                                <label class="campo__etiqueta">Confirmar nueva contraseña</label>
+                                <input type="password" name="confirmarPassword" class="control" required/>
+                            </div>
+                            <button type="submit" class="boton boton--primario boton--pequeno">
+                                Cambiar contraseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editar perfil (formulario inline) -->
+            <div class="tarjeta" style="display: none;" id="editar-perfil">
+                <h3 style="margin-top: 0;">Editar perfil</h3>
+                <form th:action="@{/perfil}" method="post">
+                    <div class="fila fila--entre fila--ajustar" style="gap: 1rem; margin-bottom: 1rem;">
+                        <div class="campo" style="flex: 1;">
+                            <label class="campo__etiqueta">Nombre completo</label>
+                            <input type="text" name="nombre" class="control" required
+                                   th:value="${usuario.nombre}"/>
+                        </div>
+                        <div class="campo" style="flex: 1;">
+                            <label class="campo__etiqueta">Teléfono</label>
+                            <input type="text" name="telefono" class="control"
+                                   th:value="${usuario.telefono != null ? usuario.telefono : ''}"/>
+                        </div>
+                    </div>
+                    <div class="campo" style="margin-bottom: 1rem;">
+                        <label class="campo__etiqueta">Fecha de nacimiento</label>
+                        <input type="date" name="fechaNacimiento" class="control"
+                               th:value="${usuario.fechaNacimiento != null ? #temporals.format(usuario.fechaNacimiento, 'yyyy-MM-dd') : ''}"/>
+                    </div>
+                    <button type="submit" class="boton boton--primario">Guardar cambios</button>
+                    <button type="button" class="boton boton--fantasma" onclick="document.getElementById('editar-perfil').style.display='none';">Cancelar</button>
+                </form>
+            </div>
+
+            <script>
+                document.querySelector('button[th\\:text="Editar perfil"]').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('editar-perfil').style.display = 'block';
+                });
+            </script>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

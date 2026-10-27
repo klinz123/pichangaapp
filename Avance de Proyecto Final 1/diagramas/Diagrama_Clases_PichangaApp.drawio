@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="opencode" version="24.0.0">
+  <diagram id="uml-clases" name="Diagrama de Clases PichangaApp">
+    <mxGraphModel dx="1500" dy="1080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="c_Usuario" value="&lt;b&gt;Usuario&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- nombre: String&lt;br&gt;- email: String&lt;br&gt;- passwordHash: String&lt;br&gt;- tipo: TipoUsuario&lt;br&gt;- telefono: String&lt;br&gt;- verificado: boolean&lt;hr&gt;+ registrar()&lt;br&gt;+ iniciarSesion(): boolean&lt;br&gt;+ actualizarPerfil()&lt;br&gt;+ verHistorialReservas()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="240" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_Cancha" value="&lt;b&gt;Cancha&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- propietarioId: Long&lt;br&gt;- nombre: String&lt;br&gt;- direccion: String&lt;br&gt;- distrito: String&lt;br&gt;- superficie: String&lt;br&gt;- precioHora: BigDecimal&lt;hr&gt;+ buscarPorFiltros()&lt;br&gt;+ gestionarHorarios()&lt;br&gt;+ consultarDisponibilidad()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="40" width="240" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_Horario" value="&lt;b&gt;Horario&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- canchaId: Long&lt;br&gt;- diaSemana: String&lt;br&gt;- horaInicio: LocalTime&lt;br&gt;- horaFin: LocalTime&lt;br&gt;- estado: String&lt;hr&gt;+ bloquear()&lt;br&gt;+ liberar()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="40" width="240" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_Reserva" value="&lt;b&gt;Reserva&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- usuarioId: Long&lt;br&gt;- canchaId: Long&lt;br&gt;- fecha: LocalDate&lt;br&gt;- horaInicio: LocalTime&lt;br&gt;- horaFin: LocalTime&lt;br&gt;- estado: EstadoReserva&lt;br&gt;- precioTotal: BigDecimal&lt;hr&gt;+ crear()&lt;br&gt;+ confirmar()&lt;br&gt;+ cancelar()&lt;br&gt;+ consultarHistorial()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="40" width="240" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_Pago" value="&lt;b&gt;Pago&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- reservaId: Long&lt;br&gt;- metodo: MetodoPago&lt;br&gt;- monto: BigDecimal&lt;br&gt;- estado: EstadoPago&lt;br&gt;- transaccionId: String&lt;hr&gt;+ registrar()&lt;br&gt;+ validarTransaccion()&lt;br&gt;+ actualizarEstado()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="40" width="240" height="170" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c_Pichanga" value="&lt;b&gt;Pichanga&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- organizadorId: Long&lt;br&gt;- canchaId: Long&lt;br&gt;- fecha: LocalDate&lt;br&gt;- hora: LocalTime&lt;br&gt;- cuposTotal: int&lt;br&gt;- cuposOcupados: int&lt;br&gt;- estado: String&lt;hr&gt;+ publicar()&lt;br&gt;+ inscribir()&lt;br&gt;+ consultarDisponibles()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="310" width="240" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_Calificacion" value="&lt;b&gt;Calificacion&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- usuarioId: Long&lt;br&gt;- canchaId: Long&lt;br&gt;- puntaje: int&lt;br&gt;- comentario: String&lt;br&gt;- fecha: LocalDate&lt;hr&gt;+ calificar()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="330" y="310" width="240" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_Notificacion" value="&lt;b&gt;Notificacion&lt;/b&gt;&lt;hr&gt;- id: Long&lt;br&gt;- usuarioId: Long&lt;br&gt;- tipo: TipoNotificacion&lt;br&gt;- contenido: String&lt;br&gt;- leida: boolean&lt;br&gt;- fecha: LocalDateTime&lt;hr&gt;+ enviar()&lt;br&gt;+ marcarLeida()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="620" y="310" width="240" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_PichangaParticipante" value="&lt;b&gt;PichangaParticipante&lt;/b&gt;&lt;hr&gt;- pichangaId: Long&lt;br&gt;- usuarioId: Long&lt;br&gt;- fechaInscripcion: LocalDateTime&lt;br&gt;- estado: String&lt;hr&gt;+ inscribirse()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="910" y="310" width="240" height="150" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_TipoUsuario" value="&lt;b&gt;&amp;laquo;enum&amp;raquo;&lt;br&gt;TipoUsuario&lt;/b&gt;&lt;hr&gt;JUGADOR&lt;br&gt;PROPIETARIO&lt;br&gt;ADMINISTRADOR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="200" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_EstadoReserva" value="&lt;b&gt;&amp;laquo;enum&amp;raquo;&lt;br&gt;EstadoReserva&lt;/b&gt;&lt;hr&gt;PENDIENTE&lt;br&gt;CONFIRMADA&lt;br&gt;CANCELADA&lt;br&gt;COMPLETADA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="290" y="580" width="210" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_MetodoPago" value="&lt;b&gt;&amp;laquo;enum&amp;raquo;&lt;br&gt;MetodoPago&lt;/b&gt;&lt;hr&gt;YAPE&lt;br&gt;PLIN&lt;br&gt;MERCADO_PAGO&lt;br&gt;PAYPAL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="550" y="580" width="210" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_EstadoPago" value="&lt;b&gt;&amp;laquo;enum&amp;raquo;&lt;br&gt;EstadoPago&lt;/b&gt;&lt;hr&gt;PENDIENTE&lt;br&gt;APROBADO&lt;br&gt;RECHAZADO&lt;br&gt;REEMBOLSADO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="810" y="580" width="200" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_TipoNotificacion" value="&lt;b&gt;&amp;laquo;enum&amp;raquo;&lt;br&gt;TipoNotificacion&lt;/b&gt;&lt;hr&gt;RECORDATORIO&lt;br&gt;CONFIRMACION&lt;br&gt;ALERTA&lt;br&gt;RESUMEN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="580" width="220" height="130" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c_AuthController" value="&lt;b&gt;&amp;laquo;controller&amp;raquo; AuthController&lt;/b&gt;&lt;hr&gt;POST /api/auth/registro&lt;br&gt;POST /api/auth/login&lt;br&gt;POST /api/auth/refresh" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="780" width="220" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_CanchaController" value="&lt;b&gt;&amp;laquo;controller&amp;raquo; CanchaController&lt;/b&gt;&lt;hr&gt;GET /api/canchas&lt;br&gt;GET /api/canchas/{id}&lt;br&gt;POST/PUT/DELETE /api/canchas" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="780" width="220" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_ReservaController" value="&lt;b&gt;&amp;laquo;controller&amp;raquo; ReservaController&lt;/b&gt;&lt;hr&gt;POST /api/reservas&lt;br&gt;GET /api/reservas/usuario&lt;br&gt;PUT /api/reservas/{id}/cancelar" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="780" width="220" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_PagoController" value="&lt;b&gt;&amp;laquo;controller&amp;raquo; PagoController&lt;/b&gt;&lt;hr&gt;POST /api/pagos&lt;br&gt;POST /api/pagos/webhook" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="820" y="780" width="220" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_PichangaController" value="&lt;b&gt;&amp;laquo;controller&amp;raquo; PichangaController&lt;/b&gt;&lt;hr&gt;POST /api/pichangas&lt;br&gt;POST /api/pichangas/{id}/unirse" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="780" width="240" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c_JpaRepository" value="&lt;b&gt;&amp;laquo;interface&amp;raquo;&lt;br&gt;JpaRepository&amp;lt;T, ID&amp;gt;&lt;/b&gt;&lt;hr&gt;(Spring Data)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="600" width="140" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c_UsuarioDAO" value="&lt;b&gt;&amp;laquo;interface&amp;raquo; UsuarioDAO&lt;/b&gt;&lt;hr&gt;+ crearUsuario(u: Usuario): Usuario&lt;br&gt;+ buscarPorCorreo(email): Usuario&lt;br&gt;+ validarCredenciales(email, pass): boolean&lt;br&gt;+ actualizarPerfil(u): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="950" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_CanchaDAO" value="&lt;b&gt;&amp;laquo;interface&amp;raquo; CanchaDAO&lt;/b&gt;&lt;hr&gt;+ buscarPorFiltros(...): List&amp;lt;Cancha&amp;gt;&lt;br&gt;+ obtenerHorarios(canchaId): List&amp;lt;Horario&amp;gt;&lt;br&gt;+ gestionarDisponibilidad(...)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="950" width="220" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_ReservaDAO" value="&lt;b&gt;&amp;laquo;interface&amp;raquo; ReservaDAO&lt;/b&gt;&lt;hr&gt;+ crearReserva(r): Reserva&lt;br&gt;+ consultarHistorial(usuarioId): List&amp;lt;Reserva&amp;gt;&lt;br&gt;+ actualizarEstado(id, estado)&lt;br&gt;+ verificarDisponibilidad(...): boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="950" width="230" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_PagoDAO" value="&lt;b&gt;&amp;laquo;interface&amp;raquo; PagoDAO&lt;/b&gt;&lt;hr&gt;+ registrarTransaccion(p): Pago&lt;br&gt;+ actualizarEstado(id, estado)&lt;br&gt;+ validarIdentificadorExterno(txnId): boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="830" y="950" width="220" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="c_PichangaDAO" value="&lt;b&gt;&amp;laquo;interface&amp;raquo; PichangaDAO&lt;/b&gt;&lt;hr&gt;+ crearPichanga(p): Pichanga&lt;br&gt;+ inscribirJugador(pichangaId, usuarioId)&lt;br&gt;+ consultarDisponibles(): List&amp;lt;Pichanga&amp;gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="950" width="240" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note_patterns" value="Patrones aplicados:&lt;br&gt;- MTV: Modelo = entidades JPA; Vista = controladores REST; Plantilla = componentes React.&lt;br&gt;- DAO (Spring Data): cada DAO extiende JpaRepository.&lt;br&gt;Multiplicidad: 1 = uno, * = muchos." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;align=left;verticalAlign=top;spacingLeft=10;spacingTop=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="150" width="190" height="140" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rel_u_cancha" value="1 registra *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Usuario" target="c_Cancha">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_u_reserva" value="1 realiza *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Usuario" target="c_Reserva">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_c_reserva" value="1 recibe *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Cancha" target="c_Reserva">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_c_horario" value="1 compone *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=diamondThin;startFill=1;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Cancha" target="c_Horario">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_r_pago" value="1 genera 1" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=diamondThin;startFill=1;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Reserva" target="c_Pago">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_u_pichanga" value="1 organiza *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Usuario" target="c_Pichanga">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_c_pichanga" value="1 tiene *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Cancha" target="c_Pichanga">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_u_calif" value="1 emite *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Usuario" target="c_Calificacion">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_c_calif" value="1 recibe *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Cancha" target="c_Calificacion">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_u_notif" value="1 recibe *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Usuario" target="c_Notificacion">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_p_participante" value="1 contiene *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Pichanga" target="c_PichangaParticipante">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel_u_participante" value="1 se inscribe *" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;endArrow=open;endFill=0;startArrow=open;startFill=0;strokeColor=#000000;fontSize=10;" edge="1" parent="1" source="c_Usuario" target="c_PichangaParticipante">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep_auth_usuario" value="usa" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_AuthController" target="c_UsuarioDAO">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_cancha_cancha" value="usa" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_CanchaController" target="c_CanchaDAO">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_reserva_reserva" value="usa" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_ReservaController" target="c_ReservaDAO">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_pago_pago" value="usa" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_PagoController" target="c_PagoDAO">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_pichanga_pichanga" value="usa" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_PichangaController" target="c_PichangaDAO">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_udaousuario" value="persiste" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_UsuarioDAO" target="c_Usuario">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_cdaocancha" value="persiste" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_CanchaDAO" target="c_Cancha">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_rdaoreserva" value="persiste" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_ReservaDAO" target="c_Reserva">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_pdaopago" value="persiste" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_PagoDAO" target="c_Pago">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_pichdao_pich" value="persiste" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=open;endFill=0;strokeColor=#808080;fontSize=10;" edge="1" parent="1" source="c_PichangaDAO" target="c_Pichanga">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="gen_jpa_usuario" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;strokeColor=#9673A6;" edge="1" parent="1" source="c_UsuarioDAO" target="c_JpaRepository">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gen_jpa_cancha" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;strokeColor=#9673A6;" edge="1" parent="1" source="c_CanchaDAO" target="c_JpaRepository">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gen_jpa_reserva" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;strokeColor=#9673A6;" edge="1" parent="1" source="c_ReservaDAO" target="c_JpaRepository">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gen_jpa_pago" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;strokeColor=#9673A6;" edge="1" parent="1" source="c_PagoDAO" target="c_JpaRepository">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="gen_jpa_pichanga" style="edgeStyle=segmentEdgeStyle;html=1;rounded=0;dashed=1;endArrow=block;endFill=0;strokeColor=#9673A6;" edge="1" parent="1" source="c_PichangaDAO" target="c_JpaRepository">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
